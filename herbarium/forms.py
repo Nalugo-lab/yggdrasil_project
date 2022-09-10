@@ -16,4 +16,4 @@ class Plant_Form(forms.ModelForm):
             # 'last_watered': forms.DateInput(attrs={'type': 'date'})
 
         }
-        exclude = ['last_watered', 'species']
+        exclude = ['last_watered']

@@ -1,5 +1,5 @@
 from django.db import models
-
+from accounts.models import User
 # Create your models here.
 
 
@@ -54,7 +54,7 @@ class Species(models.Model):
     name = models.CharField(max_length=100)
 
 
-class Sun_Preference(models.Model):
+class Sun_preference(models.Model):
     class Meta:
         verbose_name_plural = "Sun preferences"
         verbose_name = "Sun preference"
@@ -86,9 +86,12 @@ class Plant(models.Model):
         verbose_name = "Plant"
         ordering = ['popular_name']
 
-    popular_name = models.CharField(max_length=30)
+    popular_name = models.CharField(max_length=30, null=True)
+    complementary_name = models.CharField(max_length=30, null=True)
+    custom_name = models.CharField(max_length=50, null=True)
     species = models.ForeignKey(Species, on_delete=models.PROTECT)
     last_watered = models.DateTimeField(null=True)
     sun_preference = models.ForeignKey(
-        Sun_Preference, on_delete=models.PROTECT)
+        Sun_preference, on_delete=models.PROTECT)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     soil_preference = models.ForeignKey(Soil, on_delete=models.PROTECT)

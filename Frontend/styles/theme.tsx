@@ -43,7 +43,8 @@ export const darkTheme = css`
   --tertiary: ${({ theme }) => theme.dark.colors.tertiary};
   --text: ${({ theme }) => theme.dark.colors.text};
   --background-primary: ${({ theme }) => theme.dark.colors.background.primary};
-  --background-secondary: ${({ theme }) => theme.dark.colors.background.secondary};
+  --background-secondary: ${({ theme }) =>
+    theme.dark.colors.background.secondary};
   --info: ${({ theme }) => theme.dark.colors.info};
   --sucess: ${({ theme }) => theme.dark.colors.sucess};
   --error: ${({ theme }) => theme.dark.colors.error};
@@ -57,7 +58,8 @@ export const lightTheme = css`
   --tertiary: ${({ theme }) => theme.light.colors.tertiary};
   --text: ${({ theme }) => theme.light.colors.text};
   --background-primary: ${({ theme }) => theme.light.colors.background.primary};
-  --background-secondary: ${({ theme }) => theme.light.colors.background.secondary};
+  --background-secondary: ${({ theme }) =>
+    theme.light.colors.background.secondary};
   --info: ${({ theme }) => theme.light.colors.info};
   --sucess: ${({ theme }) => theme.light.colors.sucess};
   --error: ${({ theme }) => theme.light.colors.error};

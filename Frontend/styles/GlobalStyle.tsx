@@ -54,15 +54,19 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     font-family: var(--font-family);
+    color: var(--text);
 }
 a {
     text-decoration: none;
     color: inherit;
+    font-weight: var(--font-weight-bold);
+    /* color: inherit; */
     transition: 160ms ;
     &:hover{
       color: var(--primary);
     }
 }
+
 img,
 picture,
 video,

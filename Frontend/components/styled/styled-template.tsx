@@ -15,6 +15,7 @@ export const Header = styled.header`
   color: var(--text);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-medium);
+  max-width: 1150px;
 
   @media (max-width: 700px) {
     flex-direction: column;

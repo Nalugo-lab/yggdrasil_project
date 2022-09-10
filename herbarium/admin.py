@@ -8,6 +8,6 @@ admin.site.register(Family)
 admin.site.register(Genus)
 admin.site.register(Species)
 
-admin.site.register(Sun_Preference)
+admin.site.register(Sun_preference)
 admin.site.register(Soil)
 admin.site.register(Plant)

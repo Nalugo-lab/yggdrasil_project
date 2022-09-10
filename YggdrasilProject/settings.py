@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from pathlib import Path
 import environ
 import os
 
@@ -34,18 +33,21 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = []
 
 CORS_ORIGIN_WHITELIST = [
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000', 'http://localhost:3000'
 ]
 
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000']
 # Application definition
 
 TAILWIND_APP_NAME = 'theme'
 
 INSTALLED_APPS = [
     'herbarium.apps.HerbariumConfig',
+    'accounts.apps.AccountsConfig',
 
     'django_browser_reload',
     'rest_framework',
+    # 'corsheaders',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,12 +61,20 @@ MIDDLEWARE = [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    # 'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 ROOT_URLCONF = 'YggdrasilProject.urls'
 
@@ -143,6 +153,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'accounts.User'
+
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORTS_ALLOW_CREDENTIAL = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -4,6 +4,7 @@ import { ThemeProvider } from "styled-components";
 import Template from "../components/layouts/template";
 import GlobalStyle from "../styles/GlobalStyle";
 import { useEffect, useState } from "react";
+import { AuthProvider } from "../components/AuthContext";
 
 declare global {
   interface Window {
@@ -28,18 +29,20 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <ThemeProvider theme={Theme}>
-        <GlobalStyle />
-        <Template
-          toggleDarkMode={() => {
-            window.__setPreferredTheme(theme == "dark" ? "light" : "dark");
-            toggleTheme(theme == "dark" ? "light" : "dark");
-            return true;
-          }}
-        >
-          <Component {...pageProps} />
-        </Template>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider theme={Theme}>
+          <GlobalStyle />
+          <Template
+            toggleDarkMode={() => {
+              window.__setPreferredTheme(theme == "dark" ? "light" : "dark");
+              toggleTheme(theme == "dark" ? "light" : "dark");
+              return true;
+            }}
+          >
+            <Component {...pageProps} />
+          </Template>
+        </ThemeProvider>
+      </AuthProvider>
     </>
   );
 }

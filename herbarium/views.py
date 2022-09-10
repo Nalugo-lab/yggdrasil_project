@@ -1,9 +1,11 @@
+import json
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from herbarium.forms import *
 from django.views.generic import TemplateView
 from django.forms.models import model_to_dict
-import json
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 
@@ -11,9 +13,12 @@ def index(request):
     plants = Plant.objects.all()
     return render(request, 'index.html', {'plants': plants})
 
+# @login_required
+
 
 def getAllGroups(request):
-    GROUPS = list(Group.objects.values('name'))
+    print(request.COOKIES)
+    GROUPS = list(Group.objects.values('id', 'name'))
     return JsonResponse({
         'context': GROUPS
     })
@@ -21,7 +26,7 @@ def getAllGroups(request):
 
 def getAllFamilies(request):
     family = Family.objects.select_related(
-        'group').all().values('name', 'group__name')
+        'group').all().values('id', 'name', 'group__name')
     return JsonResponse({
         'context': list(family)
     })
@@ -29,7 +34,7 @@ def getAllFamilies(request):
 
 def getAllGenera(request):
     genera = Genus.objects.select_related('family').all().values(
-        'name', 'family__name', 'family__group__name')
+        'id', 'name', 'family__name', 'family__group__name')
     return JsonResponse({
         'context': list(genera)
     })
@@ -37,15 +42,41 @@ def getAllGenera(request):
 
 def getAllSpecies(request):
     genera = Species.objects.select_related('genus').all().values(
-        'name', 'genus__name', 'genus__family__name', 'genus__family__group__name')
+        'id', 'name', 'genus__name', 'genus__family__name', 'genus__family__group__name')
     return JsonResponse({
         'context': list(genera)
     })
 
 
+def getAllSoils(request):
+    soils = Soil.objects.values(
+        'id', 'name', 'description')
+    return JsonResponse({
+        'context': list(soils)
+    })
+
+
+def getAllSun_preferences(request):
+    sun_preferences = Sun_preference.objects.values(
+        'id', 'name', 'description')
+    return JsonResponse({
+        'context': list(sun_preferences)
+    })
+
+
 def GetFamilies(request, group):
-    GROUP_ID = Group.objects.get(name=group)
-    FAMILIES = list(Family.objects.filter(group_id=GROUP_ID).values())
+    try:
+        group = int(group)
+    except ValueError:
+        pass
+
+    if (isinstance(group, int)):
+        GROUP = Group.objects.get(id=group)
+
+    if (isinstance(group, str)):
+        GROUP = Group.objects.get(name=group)
+
+    FAMILIES = list(Family.objects.filter(group=GROUP).values())
 
     return JsonResponse({
         'context': FAMILIES
@@ -53,8 +84,23 @@ def GetFamilies(request, group):
 
 
 def GetGenera(request, group, family):
-    FAMILIES_ID = Family.objects.get(name=family)
-    GENERA = list(Genus.objects.filter(family_id=FAMILIES_ID).values())
+    try:
+        group = int(group)
+        family = int(family)
+
+    except ValueError:
+        pass
+
+    if (isinstance(group, int)):
+        GROUP = Group.objects.get(id=group)
+        FAMILY = Family.objects.get(id=family)
+
+    if (isinstance(group, str)):
+        GROUP = Group.objects.get(name=group)
+        FAMILY = Family.objects.get(name=family)
+
+    GENERA = list(Genus.objects.filter(
+        family=FAMILY, family__group=GROUP).values())
 
     return JsonResponse({
         'context': GENERA
@@ -62,8 +108,26 @@ def GetGenera(request, group, family):
 
 
 def GetSpecies(request, group, family, genus):
+    try:
+        group = int(group)
+        family = int(family)
+        genus = int(genus)
+
+    except ValueError:
+        pass
+
+    if (isinstance(group, int)):
+        GROUP = Group.objects.get(id=group)
+        FAMILY = Family.objects.get(id=family)
+        GENUS = Genus.objects.get(id=genus)
+
+    if (isinstance(group, str)):
+        GROUP = Group.objects.get(name=group)
+        FAMILY = Family.objects.get(name=family)
+        GENUS = Genus.objects.get(name=genus)
+
     SPECIES = list(Species.objects.filter(
-        genus__name=genus, genus__family__name=family).values())
+        genus=GENUS, genus__family=FAMILY, genus__family__group=GROUP).values())
 
     return JsonResponse({
         'context': SPECIES
@@ -88,16 +152,22 @@ def GetSpeciment(request, group, family, genus, species):
 
 class PlantCreateView(TemplateView):
     def post(self, request):
-        form = Plant_Form(request.POST)
+        data = json.loads(request.body.decode("utf-8"))
+        data['owner'] = request.user
+        # print(data)
+        # postCopy = request.POST.copy()
+        # postCopy['owner'] = request.user
+        form = Plant_Form(data)
+        
         if form.is_valid():
             form.save()
-            return redirect('/herbarium')
-        return render(request, "plants/create.html", {'form': form})
+            print('salvou')
+            return redirect('/')
 
-    def get(self, request):
-        form = Plant_Form()
-        print(request)
-        return render(request, "plants/create.html", {'form': form})
+        
+        return JsonResponse({
+            'context': form.errors.as_json()
+        })
 
 
 class PlantReadView(TemplateView):

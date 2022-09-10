@@ -1,29 +1,20 @@
 import type { NextPage } from "next";
 import { Container } from "../components/styled/styled-index";
 
-interface Data {
-  name: string;
-  id: number;
-}
+// export async function getStaticProps() {
+//   const res = await fetch(`http://localhost:3000/django/auth/authenticate`);
+//   const groups = await res.json();
+//   console.log(groups);
 
-export async function getStaticProps() {
-  const res = await fetch(
-    `http://localhost:3000/django/herbarium/groups/getAll`
-  );
-  const groups = (await res.json()).context;
+//   return { props: { groups: "1" } };
+// }
 
-  return { props: { groups } };
-}
-
-const Home: NextPage = ({ groups }: any) => {
+const Home: NextPage = () => {
   return (
     <Container>
-      <h1>GRUPOS</h1>
-      {groups.map((e: Data, index: number) => (
-        <a href={`browse/${e.name}`} key={index}>
-          {e.name}
-        </a>
-      ))}
+      <a href="/browse">browse</a>
+      <a href="/plants/add">add</a>
+
     </Container>
   );
 };

@@ -10,12 +10,37 @@ import {
   ThemeSwitcher,
 } from "../styled/styled-template";
 
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
+
 interface TemplateProps<P = any> {
   children: P;
   toggleDarkMode(): boolean;
 }
 
 const Template = ({ children, toggleDarkMode }: TemplateProps) => {
+  const { isAuthenticated } = useContext(AuthContext);
+  const utilsLinks = !isAuthenticated ? (
+    <>
+      <li>
+        <Link href="/register">
+          <a>REGISTER</a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/login">
+          <a>LOGIN</a>
+        </Link>
+      </li>
+    </>
+  ) : (
+    <li>
+      <Link href="/logout">
+        <a>LOGOUT</a>
+      </Link>
+    </li>
+  );
+
   return (
     <>
       <Header>
@@ -29,23 +54,7 @@ const Template = ({ children, toggleDarkMode }: TemplateProps) => {
         </Link>
 
         <Navbar>
-          <ul>
-            <li>
-              <Link href="/">
-                <a>LOREMK</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/">
-                <a>LOREM</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/">
-                <a>LOREM</a>
-              </Link>
-            </li>
-          </ul>
+          <ul>{utilsLinks}</ul>
         </Navbar>
 
         <ThemeSwitcher onClick={() => toggleDarkMode()}>TEMA</ThemeSwitcher>

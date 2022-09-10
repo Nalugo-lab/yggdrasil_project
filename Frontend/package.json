@@ -11,14 +11,15 @@
   "dependencies": {
     "@types/styled-components-react-native": "^5.1.3",
     "babel-plugin-styled-components": "^2.0.7",
-    "next": "12.1.6",
+    "next": "^12.3.0",
+    "nookies": "^2.5.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {
-    "@types/node": "18.0.0",
-    "@types/react": "^18.0.17",
+    "@types/node": "^18.7.16",
+    "@types/react": "^18.0.19",
     "@types/react-dom": "18.0.5",
     "@types/webpack-env": "^1.17.0",
     "eslint": "8.18.0",
