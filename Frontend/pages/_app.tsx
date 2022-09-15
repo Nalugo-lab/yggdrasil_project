@@ -33,6 +33,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={Theme}>
           <GlobalStyle />
           <Template
+            currentTheme = {theme}
             toggleDarkMode={() => {
               window.__setPreferredTheme(theme == "dark" ? "light" : "dark");
               toggleTheme(theme == "dark" ? "light" : "dark");

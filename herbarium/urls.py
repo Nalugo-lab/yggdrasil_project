@@ -15,6 +15,7 @@ urlpatterns = [
          name='get_all_sun_preferences'),
     path('soils/getAll', views.getAllSoils, name='get_all_soils'),
 
+    path('plants/getAll', views.getAllPlants, name='get_all_plants'),
 
     path('plants/add', views.PlantCreateView.as_view(), name='plant_create'),
     path('plants/<id>/edit', views.PlantEditView.as_view(), name='plant_edit'),

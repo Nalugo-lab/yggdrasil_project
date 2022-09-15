@@ -6,13 +6,19 @@ export const ThemeSwitcher = styled.button`
   padding: 4px;
 `;
 
+export const ThemeSwitcherWrapper = styled.div`
+  margin-right: auto;
+  display: flex;
+  filter: var(--inverse-inverse);
+`;
+
 export const Header = styled.header`
   display: flex;
+  color: var(--text-secondary);
   width: 100%;
   margin: 16px auto;
   padding: 0 32px;
   align-items: center;
-  color: var(--text);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-medium);
   max-width: 1150px;
@@ -34,10 +40,9 @@ export const LogoWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
-  color: var(--text);
   & img {
     width: 50px;
-    filter: var(--inverse);
+    filter: var(--inverse-inverse);
   }
   & span {
     font-size: var(--font-size-3xl);
@@ -50,9 +55,12 @@ export const LogoWrapper = styled.div`
 export const Navbar = styled.nav`
   flex-grow: 1;
   vertical-align: middle;
+  margin: 0 64px;
+
   ul {
+    /* width: auto; */
     display: flex;
-    justify-content: space-around;
+    gap: 32px;
   }
   a {
     color: inherit;

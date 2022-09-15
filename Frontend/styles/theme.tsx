@@ -1,34 +1,40 @@
 export const Theme = {
   dark: {
-    name: 'dark',
+    name: "dark",
     colors: {
       primary: "#d5043c",
       secondary: "hsl(333deg, 100%, 52%)",
       tertiary: "rgb(15, 73, 197)",
-      text: "hsl(0deg, 0%, 100%)",
+      text: {
+        primary: "#fff",
+        secondary: "#fff",
+      },
       background: {
         primary: "#141414",
         secondary: "#0E141B",
       },
       info: "hsl(230deg, 100%, 69%)",
-      sucess: "hsl(160deg, 100%, 40%)",
+      success: "hsl(160deg, 100%, 40%)",
       error: "hsl(340deg, 95%, 60%)",
       alert: "hsl(30deg, 100%, 50%)",
     },
   },
   light: {
-    name: 'light',
+    name: "light",
     colors: {
-      primary: "#d5043c",
-      secondary: "hsl(333deg, 100%, 52%)",
+      primary: "#E59967",
+      secondary: "#ffd9b3",
       tertiary: "rgb(15, 73, 197)",
-      text: "#091540",
+      text: {
+        primary: "#000",
+        secondary: "#fff",
+      },
       background: {
-        primary: "#FFF",
-        secondary: "#F8F7F9",
+        primary: "#008978",
+        secondary: "#ECF0F1",
       },
       info: "hsl(230deg, 100%, 69%)",
-      sucess: "hsl(160deg, 100%, 40%)",
+      success: "hsl(160deg, 100%, 40%)",
       error: "hsl(340deg, 95%, 60%)",
       alert: "hsl(30deg, 100%, 50%)",
     },
@@ -41,28 +47,32 @@ export const darkTheme = css`
   --primary: ${({ theme }) => theme.dark.colors.primary};
   --secondary: ${({ theme }) => theme.dark.colors.secondary};
   --tertiary: ${({ theme }) => theme.dark.colors.tertiary};
-  --text: ${({ theme }) => theme.dark.colors.text};
+  --text: ${({ theme }) => theme.dark.colors.text.primary};
+  --text-secondary: ${({ theme }) => theme.dark.colors.text.secondary};
   --background-primary: ${({ theme }) => theme.dark.colors.background.primary};
   --background-secondary: ${({ theme }) =>
     theme.dark.colors.background.secondary};
   --info: ${({ theme }) => theme.dark.colors.info};
-  --sucess: ${({ theme }) => theme.dark.colors.sucess};
+  --success: ${({ theme }) => theme.dark.colors.success};
   --error: ${({ theme }) => theme.dark.colors.error};
   --alert: ${({ theme }) => theme.dark.colors.alert};
   --inverse: brightness(0) invert(1);
+  --inverse-inverse: brightness(0) invert(1);
 `;
 
 export const lightTheme = css`
   --primary: ${({ theme }) => theme.light.colors.primary};
   --secondary: ${({ theme }) => theme.light.colors.secondary};
   --tertiary: ${({ theme }) => theme.light.colors.tertiary};
-  --text: ${({ theme }) => theme.light.colors.text};
+  --text: ${({ theme }) => theme.light.colors.text.primary};
+  --text-secondary: ${({ theme }) => theme.light.colors.text.secondary};
   --background-primary: ${({ theme }) => theme.light.colors.background.primary};
   --background-secondary: ${({ theme }) =>
     theme.light.colors.background.secondary};
   --info: ${({ theme }) => theme.light.colors.info};
-  --sucess: ${({ theme }) => theme.light.colors.sucess};
+  --success: ${({ theme }) => theme.light.colors.success};
   --error: ${({ theme }) => theme.light.colors.error};
   --alert: ${({ theme }) => theme.light.colors.alert};
   --inverse: brightness(0) invert(0);
+  --inverse-inverse: brightness(0) invert(1);
 `;

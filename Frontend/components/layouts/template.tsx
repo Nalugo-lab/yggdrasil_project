@@ -8,6 +8,7 @@ import {
   RandomLinks,
   SocialMediaIcon,
   ThemeSwitcher,
+  ThemeSwitcherWrapper,
 } from "../styled/styled-template";
 
 import { useContext } from "react";
@@ -16,9 +17,14 @@ import { AuthContext } from "../AuthContext";
 interface TemplateProps<P = any> {
   children: P;
   toggleDarkMode(): boolean;
+  currentTheme: string;
 }
 
-const Template = ({ children, toggleDarkMode }: TemplateProps) => {
+const Template = ({
+  children,
+  toggleDarkMode,
+  currentTheme,
+}: TemplateProps) => {
   const { isAuthenticated } = useContext(AuthContext);
   const utilsLinks = !isAuthenticated ? (
     <>
@@ -48,7 +54,7 @@ const Template = ({ children, toggleDarkMode }: TemplateProps) => {
           <a>
             <LogoWrapper>
               <img src="/icons/favicon.png" />
-              <span>Lorem</span>
+              <span>YggdrasilProject</span>
             </LogoWrapper>
           </a>
         </Link>
@@ -56,8 +62,17 @@ const Template = ({ children, toggleDarkMode }: TemplateProps) => {
         <Navbar>
           <ul>{utilsLinks}</ul>
         </Navbar>
-
-        <ThemeSwitcher onClick={() => toggleDarkMode()}>TEMA</ThemeSwitcher>
+        <ThemeSwitcherWrapper>
+          <ThemeSwitcher onClick={() => toggleDarkMode()}>
+            <img
+              src={
+                currentTheme == "dark"
+                  ? "/icons/night.svg"
+                  : "/icons/flower.svg"
+              }
+            />
+          </ThemeSwitcher>
+        </ThemeSwitcherWrapper>
       </Header>
 
       {children}

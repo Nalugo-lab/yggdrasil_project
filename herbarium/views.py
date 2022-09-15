@@ -64,6 +64,17 @@ def getAllSun_preferences(request):
     })
 
 
+def getAllPlants(request):
+    plants = Plant.objects.select_related(
+        'owner', 'soil_preference', 'sun_preference', 'species').all().values(
+        'owner__username', 'popular_name', 'custom_name','complementary_name',
+        'soil_preference__name', 'sun_preference__name', 'last_watered',
+        'species__name', 'species__genus__name', 'species__genus__family__name', 'species__genus__family__group__name')
+    return JsonResponse({
+        'context': list(plants)
+    })
+
+
 def GetFamilies(request, group):
     try:
         group = int(group)
@@ -158,13 +169,12 @@ class PlantCreateView(TemplateView):
         # postCopy = request.POST.copy()
         # postCopy['owner'] = request.user
         form = Plant_Form(data)
-        
+
         if form.is_valid():
             form.save()
             print('salvou')
             return redirect('/')
 
-        
         return JsonResponse({
             'context': form.errors.as_json()
         })
