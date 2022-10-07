@@ -1,5 +1,7 @@
+import os
 from django.db import models
 from accounts.models import User
+from YggdrasilProject.settings import BASE_DIR  
 # Create your models here.
 
 
@@ -86,12 +88,29 @@ class Plant(models.Model):
         verbose_name = "Plant"
         ordering = ['popular_name']
 
-    popular_name = models.CharField(max_length=30, null=True)
-    complementary_name = models.CharField(max_length=30, null=True)
-    custom_name = models.CharField(max_length=50, null=True)
+    popular_name = models.CharField(max_length=30, null=True, blank=True)
+    complementary_name = models.CharField(max_length=30, null=True, blank=True)
+    custom_name = models.CharField(max_length=50, null=True, blank=True)
     species = models.ForeignKey(Species, on_delete=models.PROTECT)
     last_watered = models.DateTimeField(null=True)
     sun_preference = models.ForeignKey(
         Sun_preference, on_delete=models.PROTECT)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     soil_preference = models.ForeignKey(Soil, on_delete=models.PROTECT)
+
+class PlantImages(models.Model):
+    image = models.ImageField(
+        upload_to='plant_images', verbose_name='Picture of a plant')
+    plant = models.ForeignKey(
+        Plant, on_delete=models.CASCADE, verbose_name='Plant', null=True)
+    is_banner = models.BooleanField(default=False)
+
+    def delete(self):
+            if self.image != '':
+                try:
+                    url_path=str(BASE_DIR)+'/cultura/media/'+str(self.image)
+                    
+                    os.remove(url_path)
+                except Exception as e:
+                    print(e)
+            super(PlantImages, self).delete()

@@ -52,8 +52,16 @@ export function AuthProvider({ children }: any) {
             headers,
           }
         );
-        const { user } = await response.json();
-        setUser(user);
+        if (!response.ok) {
+          const data = await response.json()
+          setUser(null)
+          // return data.detail  
+        } else {
+          const { user } = await response.json();
+          setUser(user);
+        }
+
+
       }
     }
     fetchUser();
@@ -77,10 +85,9 @@ export function AuthProvider({ children }: any) {
 
     const data = await response.json();
     const { user } = data;
-
     if (user) {
       setUser(user);
-      setCsrfToken(getCookie("csrftoken"));
+      // setCsrfToken(getCookie("csrftoken"));
       Router.push("/");
     } else {
       console.log("deu merda");

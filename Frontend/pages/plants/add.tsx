@@ -5,17 +5,17 @@ import { AuthContext } from "../../components/AuthContext";
 import Router from "next/router";
 
 export async function getStaticProps() {
-  const groupsRes = await fetch(
-    `http://localhost:3000/django/herbarium/groups/getAll`
-  );
+  const groupsRes = await fetch(`http://localhost:3000/django/groups/`);
 
   const sun_preferencesRes = await fetch(
-    `http://localhost:3000/django/herbarium/sun_preferences/getAll`
+    `http://localhost:3000/django/sun_preferences`
   );
 
-  const soilsRes = await fetch(
-    `http://localhost:3000/django/herbarium/soils/getAll`
-  );
+  const soilsRes = await fetch(`http://localhost:3000/django/soils`);
+
+  // const form = await fetch(
+  //   `http://localhost:3000/django/herbarium/soils/getAll`
+  // )
 
   const groups = (await groupsRes.json()).context;
   const sun_preferences = (await sun_preferencesRes.json()).context;
@@ -73,17 +73,19 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
   const [custom_name, setCustom_name] = useState("");
   const [complementary_name, setComplementary_name] = useState("");
 
-  const [soil_preference, setSoil_preference] = useState();
-  const [sun_preference, setSun_preference] = useState();
+  const [soil_preference, setSoil_preference] = useState(undefined);
+  const [sun_preference, setSun_preference] = useState(undefined);
 
-  const [species, setSpecies] = useState();
-  const [genus, setGenus] = useState();
-  const [family, setFamily] = useState();
-  const [group, setGroup] = useState();
+  const [species, setSpecies] = useState(undefined);
+  const [genus, setGenus] = useState(undefined);
+  const [family, setFamily] = useState(undefined);
+  const [group, setGroup] = useState(undefined);
 
   const [speciesData, setSpeciesData] = useState();
   const [genusData, setGenusData] = useState();
   const [familyData, setFamilyData] = useState();
+
+  const [photoFile, setPhotoFile] = useState<Blob>();
 
   async function submitForm(e: SyntheticEvent) {
     e.preventDefault();
@@ -93,21 +95,22 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
         "X-CSRFToken": CsrfToken,
       });
 
-      const res = await fetch(
-        "http://localhost:3000/django/herbarium/plants/add",
-        {
-          method: "POST",
-          headers,
-          body: JSON.stringify({
-            popular_name,
-            custom_name,
-            complementary_name,
-            soil_preference,
-            sun_preference,
-            species,
-          }),
-        }
-      );
+      const data = new FormData();
+      if (!photoFile || !species || !soil_preference || !sun_preference) return;
+      data.append("image", photoFile);
+
+      data.append("popular_name", popular_name);
+      data.append("custom_name", custom_name);
+      data.append("complementary_name", complementary_name);
+      data.append("soil_preference", soil_preference);
+      data.append("sun_preference", sun_preference);
+      data.append("species", species);
+
+      const res = await fetch("http://localhost:3000/django/plants/", {
+        method: "POST",
+        headers,
+        body: data,
+      });
       if (res.ok) {
         Router.push("/");
       } else {
@@ -122,9 +125,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
   useEffect(() => {
     if (group) {
       (async () => {
-        const response = await fetch(
-          `http://localhost:3000/django/herbarium/${group}`
-        );
+        const response = await fetch(`http://localhost:3000/django/plants/scientific/${group}`);
         const data = (await response.json()).context;
         setFamilyData(data);
         setFamily(undefined);
@@ -136,7 +137,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (family && group) {
       (async () => {
         const response = await fetch(
-          `http://localhost:3000/django/herbarium/${group}/${family}`
+          `http://localhost:3000/django/plants/scientific/${group}/${family}`
         );
         const data = (await response.json()).context;
         setGenusData(data);
@@ -149,7 +150,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (genus && family && group) {
       (async () => {
         const response = await fetch(
-          `http://localhost:3000/django/herbarium/${group}/${family}/${genus}`
+          `http://localhost:3000/django/plants/scientific/${group}/${family}/${genus}`
         );
         const data = (await response.json()).context;
         setSpeciesData(data);
@@ -252,6 +253,22 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
           name="custom_name"
           value={complementary_name}
           onChange={(e) => setComplementary_name(e.target.value)}
+        />
+
+        <label htmlFor="photo">Plant photo</label>
+        <input
+          type="file"
+          id="photo"
+          name="photo"
+          onChange={(e) => {
+            const [file]: any = e.target.files;
+            if (file) setPhotoFile(file);
+          }}
+        />
+        <img
+          id="blah"
+          src={photoFile ? URL.createObjectURL(photoFile) : ""}
+          alt="your image"
         />
 
         <button>ENVIAR</button>

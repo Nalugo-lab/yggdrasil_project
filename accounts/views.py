@@ -45,7 +45,6 @@ class Login(APIView):
 
 class Authenticate(APIView):
     def post(self, request):
-        # print(request.COOKIES)
 
         # username = request.data['username']
         # password = request.data['password']

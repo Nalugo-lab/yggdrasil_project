@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import styled from "styled-components";
 
 interface Data {
+  banner: string | undefined;
   owner__username: string;
   popular_name: string;
   custom_name: string;
@@ -28,9 +29,7 @@ const PlantCard = styled.div`
   background-color: var(--secondary);
   max-width: 620px;
   min-width: 580px;
-
   max-height: 220px;
-
   margin: 8px;
   padding: 8px;
   border-radius: 10px;
@@ -45,7 +44,7 @@ const Info = styled.div`
 const ImageCard = styled.div`
   background-color: var(--info);
   aspect-ratio: 1 / 1;
-  background-image: url("/queimada.jpeg");
+  background-image: url(${(props: any) => props.src});
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -72,17 +71,15 @@ const IconPlusName = styled.div``;
 const Owner = styled.div``;
 
 export async function getStaticProps() {
-  const res = await fetch(
-    `http://localhost:3000/django/herbarium/plants/getAll`
-  );
-  const plants = (await res.json()).context;
+  const res = await fetch(`http://localhost:3000/django/plants`);
+
+  const data = await res.json();
+  const plants = data.context;
 
   return { props: { plants } };
 }
 
 const Home: NextPage = ({ plants }: any) => {
-  console.table(plants);
-
   return (
     <Container>
       {plants.map((e: Data, index: number) => (
@@ -112,7 +109,7 @@ const Home: NextPage = ({ plants }: any) => {
               <img />
             </Owner>
           </Info>
-          <ImageCard></ImageCard>
+          <ImageCard src={"http://localhost:8000" + e.banner}></ImageCard>
         </PlantCard>
       ))}
     </Container>

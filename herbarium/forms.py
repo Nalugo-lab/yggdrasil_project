@@ -1,3 +1,4 @@
+from dataclasses import field
 from django import forms
 from .models import *
 
@@ -13,7 +14,14 @@ class Plant_Form(forms.ModelForm):
     class Meta:
         model = Plant
         widgets = {
-            # 'last_watered': forms.DateInput(attrs={'type': 'date'})
 
         }
         exclude = ['last_watered']
+
+class PlantImages_Form(forms.ModelForm):
+    class Meta:
+        model = PlantImages
+        widgets = {
+
+        }
+        exclude = ['plant']

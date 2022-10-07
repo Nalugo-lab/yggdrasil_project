@@ -1,3 +1,4 @@
+from http.client import HTTPResponse
 import json
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
@@ -9,15 +10,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
-def index(request):
-    plants = Plant.objects.all()
-    return render(request, 'index.html', {'plants': plants})
-
-# @login_required
-
-
 def getAllGroups(request):
-    print(request.COOKIES)
     GROUPS = list(Group.objects.values('id', 'name'))
     return JsonResponse({
         'context': GROUPS
@@ -61,17 +54,6 @@ def getAllSun_preferences(request):
         'id', 'name', 'description')
     return JsonResponse({
         'context': list(sun_preferences)
-    })
-
-
-def getAllPlants(request):
-    plants = Plant.objects.select_related(
-        'owner', 'soil_preference', 'sun_preference', 'species').all().values(
-        'owner__username', 'popular_name', 'custom_name','complementary_name',
-        'soil_preference__name', 'sun_preference__name', 'last_watered',
-        'species__name', 'species__genus__name', 'species__genus__family__name', 'species__genus__family__group__name')
-    return JsonResponse({
-        'context': list(plants)
     })
 
 
@@ -145,7 +127,7 @@ def GetSpecies(request, group, family, genus):
     })
 
 
-def GetSpeciment(request, group, family, genus, species):
+def GetSpecimen(request, group, family, genus, species):
     SPECIES = Species.objects.get(
         name=species, genus__name=genus, genus__family__name=family)
 
@@ -161,52 +143,48 @@ def GetSpeciment(request, group, family, genus, species):
 # PLANT CRUD
 
 
-class PlantCreateView(TemplateView):
+class PlantView(TemplateView):
     def post(self, request):
-        data = json.loads(request.body.decode("utf-8"))
+        data = request.POST.copy()
         data['owner'] = request.user
-        # print(data)
-        # postCopy = request.POST.copy()
-        # postCopy['owner'] = request.user
         form = Plant_Form(data)
 
         if form.is_valid():
-            form.save()
-            print('salvou')
-            return redirect('/')
+            print("form comum is valid")
+            formImage = PlantImages_Form({}, request.FILES)
+
+            if formImage.is_valid():
+                plant = form.save()
+                image = formImage.save()
+                image.plant = plant
+                image.is_banner = True
+                image.save()
+
+                print('salvou')
+                return redirect('/')
+            
+            print(formImage.errors)
+
+        print(form.errors)
 
         return JsonResponse({
             'context': form.errors.as_json()
         })
 
+    def get(self, request):
+        plants = Plant.objects.select_related(
+            'owner', 'soil_preference', 'sun_preference', 'species').all().values(
+            'id', 'owner__username', 'popular_name', 'custom_name', 'complementary_name',
+            'soil_preference__name', 'sun_preference__name', 'last_watered',
+            'species__name', 'species__genus__name', 'species__genus__family__name', 'species__genus__family__group__name')
 
-class PlantReadView(TemplateView):
-    def get(self, request, id):
-        plant = Plant.objects.get(id=id)
-        return render(request, "plants/read.html", {'plant': plant})
+        plants = list(plants)
 
+        for plant in plants:
+            plant['banner'] = (PlantImages.objects.get(
+                plant_id=plant['id'], is_banner=True).image.url)
 
-class PlantEditView(TemplateView):
-    def post(self, request, id):
-        plant = Plant.objects.get(id=id)
-        form = Plant_Form(request.POST, instance=plant)
-        # CHECK IF USER IS PLANT USER
-        if form.is_valid():
-            form.save()
-            return redirect('/herbarium')
+        return JsonResponse({
+            'context': plants,
 
-    def get(self, request, id):
-        plant = Plant.objects.get(id=id)
-        form = Plant_Form(instance=plant)
-
-        return render(request, "plants/edit.html", {'plant': plant, 'form': form})
-
-
-class PlantRemoveView(TemplateView):
-    def post(self, request, id):
-        # CHECK IF USER IS PLANT USER
-        plant = Plant.objects.get(id=id)
-
-    def get(self, request, id):
-        plant = Plant.objects.get(id=id)
-        return render(request, "plants/delete.html", {'plant': plant})
+        })
