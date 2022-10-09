@@ -1,61 +1,67 @@
-from http.client import HTTPResponse
-import json
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from herbarium.forms import *
-from django.views.generic import TemplateView
 from django.forms.models import model_to_dict
-from django.contrib.auth.decorators import login_required
+
+from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework.views import APIView
+
+from herbarium.serializers import *
+from herbarium.forms import *
 
 # Create your views here.
 
 
-def getAllGroups(request):
-    GROUPS = list(Group.objects.values('id', 'name'))
-    return JsonResponse({
-        'context': GROUPS
-    })
+class Group_ViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
 
 
-def getAllFamilies(request):
-    family = Family.objects.select_related(
-        'group').all().values('id', 'name', 'group__name')
-    return JsonResponse({
-        'context': list(family)
-    })
+class Family_ViewSet(viewsets.ModelViewSet):
+    queryset = Family.objects.all()
+    serializer_class = FamilySerializer
 
 
-def getAllGenera(request):
-    genera = Genus.objects.select_related('family').all().values(
-        'id', 'name', 'family__name', 'family__group__name')
-    return JsonResponse({
-        'context': list(genera)
-    })
+class Genus_ViewSet(viewsets.ModelViewSet):
+    queryset = Genus.objects.all()
+    serializer_class = GenusSerializer
 
 
-def getAllSpecies(request):
-    genera = Species.objects.select_related('genus').all().values(
-        'id', 'name', 'genus__name', 'genus__family__name', 'genus__family__group__name')
-    return JsonResponse({
-        'context': list(genera)
-    })
+class Species_ViewSet(viewsets.ModelViewSet):
+    queryset = Species.objects.all()
+    serializer_class = SpeciesSerializer
 
 
-def getAllSoils(request):
-    soils = Soil.objects.values(
-        'id', 'name', 'description')
-    return JsonResponse({
-        'context': list(soils)
-    })
+class Soil_ViewSet(viewsets.ModelViewSet):
+    queryset = Soil.objects.all()
+    serializer_class = SoilSerializer
 
 
-def getAllSun_preferences(request):
-    sun_preferences = Sun_preference.objects.values(
-        'id', 'name', 'description')
-    return JsonResponse({
-        'context': list(sun_preferences)
-    })
+class Sun_preference_ViewSet(viewsets.ModelViewSet):
+    queryset = Sun_preference.objects.all()
+    serializer_class = Sun_preferenceSerializer
 
+
+class Plant_ViewSet(viewsets.ModelViewSet):
+    queryset = Plant.objects.all()
+    serializer_class = PlantSerializer
+
+    def create(self, request):
+        data = request.POST.copy()
+        data['owner'] = request.user
+        form = Plant_Form(data)
+
+        if form.is_valid():
+            formImage = Plant_image_Form({}, request.FILES)
+
+            if formImage.is_valid():
+                plant = form.save()
+                image = formImage.save()
+                image.plant = plant
+                image.is_banner = True
+                image.save()
+
+                return Response(status=200)
+
+        return Response(form.errors.as_json())
 
 def GetFamilies(request, group):
     try:
@@ -63,17 +69,15 @@ def GetFamilies(request, group):
     except ValueError:
         pass
 
-    if (isinstance(group, int)):
+    if isinstance(group, int):
         GROUP = Group.objects.get(id=group)
 
-    if (isinstance(group, str)):
+    else:
         GROUP = Group.objects.get(name=group)
 
     FAMILIES = list(Family.objects.filter(group=GROUP).values())
 
-    return JsonResponse({
-        'context': FAMILIES
-    })
+    return Response(FAMILIES)
 
 
 def GetGenera(request, group, family):
@@ -95,9 +99,7 @@ def GetGenera(request, group, family):
     GENERA = list(Genus.objects.filter(
         family=FAMILY, family__group=GROUP).values())
 
-    return JsonResponse({
-        'context': GENERA
-    })
+    return Response(GENERA)
 
 
 def GetSpecies(request, group, family, genus):
@@ -122,9 +124,7 @@ def GetSpecies(request, group, family, genus):
     SPECIES = list(Species.objects.filter(
         genus=GENUS, genus__family=FAMILY, genus__family__group=GROUP).values())
 
-    return JsonResponse({
-        'context': SPECIES
-    })
+    return Response(SPECIES)
 
 
 def GetSpecimen(request, group, family, genus, species):
@@ -136,55 +136,4 @@ def GetSpecimen(request, group, family, genus, species):
     data['family'] = family
     data['group'] = group
 
-    return JsonResponse({
-        'context': data
-    })
-
-# PLANT CRUD
-
-
-class PlantView(TemplateView):
-    def post(self, request):
-        data = request.POST.copy()
-        data['owner'] = request.user
-        form = Plant_Form(data)
-
-        if form.is_valid():
-            print("form comum is valid")
-            formImage = PlantImages_Form({}, request.FILES)
-
-            if formImage.is_valid():
-                plant = form.save()
-                image = formImage.save()
-                image.plant = plant
-                image.is_banner = True
-                image.save()
-
-                print('salvou')
-                return redirect('/')
-            
-            print(formImage.errors)
-
-        print(form.errors)
-
-        return JsonResponse({
-            'context': form.errors.as_json()
-        })
-
-    def get(self, request):
-        plants = Plant.objects.select_related(
-            'owner', 'soil_preference', 'sun_preference', 'species').all().values(
-            'id', 'owner__username', 'popular_name', 'custom_name', 'complementary_name',
-            'soil_preference__name', 'sun_preference__name', 'last_watered',
-            'species__name', 'species__genus__name', 'species__genus__family__name', 'species__genus__family__group__name')
-
-        plants = list(plants)
-
-        for plant in plants:
-            plant['banner'] = (PlantImages.objects.get(
-                plant_id=plant['id'], is_banner=True).image.url)
-
-        return JsonResponse({
-            'context': plants,
-
-        })
+    return Response(data)

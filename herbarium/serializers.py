@@ -1,21 +1,64 @@
+from attr import field
 from rest_framework import serializers
-from .models import Plant, PlantImages
+from yaml import serialize
+from .models import *
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('id', 'name')
+
+
+class FamilySerializer(serializers.ModelSerializer):
+    group = GroupSerializer()
+
+    class Meta:
+        model = Family
+        fields = ('id', 'name', 'group')
+
+
+class GenusSerializer(serializers.ModelSerializer):
+    family = FamilySerializer()
+
+    class Meta:
+        model = Genus
+        fields = ('id', 'name', 'family')
+
+
+class SpeciesSerializer(serializers.ModelSerializer):
+    genus = GenusSerializer()
+
+    class Meta:
+        model = Species
+        fields = ('id', 'name', 'genus')
+
+
+class SoilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Soil
+        fields = ('id', 'name', 'description')
+
+
+class Sun_preferenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sun_preference
+        fields = ('id', 'name', 'description')
 
 
 class PlantSerializer(serializers.ModelSerializer):
+    species = SpeciesSerializer()
+    soil = SoilSerializer()
+    sun_preference = Sun_preferenceSerializer()
+    banner = serializers.SerializerMethodField("get_banner_url")
+
     class Meta:
         model = Plant
-        fields = ['owner', 'soil_preference', 'sun_preference', 'species',
-                  'id', 'owner', 'popular_name', 'custom_name', 'complementary_name',
-                  'soil_preference', 'sun_preference', 'last_watered',
-                  'species']
+        fields = ('owner', 'soil', 'sun_preference', 'species', 'banner',
+                  'id', 'popular_name', 'custom_name', 'complementary_name',
+                  'last_watered')
 
+    def get_banner_url(self, plant):
+        banner = Plant_image.objects.get(plant=plant, is_banner=True)
 
-def get_banner_url(self, plant):
-    request = self.context.get('request')
-    bannerImage = PlantImages.objects.get(
-        plant_id=plant['id'], banner=True)
-
-    photo_url = bannerImage.image.url
-
-    return request.build_absolute_uri(photo_url)
+        return banner.image.url

@@ -13,15 +13,9 @@ class Plant_Form(forms.ModelForm):
 
     class Meta:
         model = Plant
-        widgets = {
-
-        }
         exclude = ['last_watered']
 
-class PlantImages_Form(forms.ModelForm):
+class Plant_image_Form(forms.ModelForm):
     class Meta:
-        model = PlantImages
-        widgets = {
-
-        }
+        model = Plant_image
         exclude = ['plant']

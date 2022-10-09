@@ -7,7 +7,6 @@ const Home: NextPage = () => {
       <a href="/browse">browse</a>
       <a href="/plants/add">add</a>
       <a href="/browse/plants">all plants</a>
-      <a href="/plants/append">Test image</a>
     </Container>
   );
 };

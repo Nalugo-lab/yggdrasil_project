@@ -1,7 +1,7 @@
 import os
 from django.db import models
 from accounts.models import User
-from YggdrasilProject.settings import BASE_DIR  
+from YggdrasilProject.settings import BASE_DIR
 # Create your models here.
 
 
@@ -12,9 +12,9 @@ class Group(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return '%s' % (self.name)
+        return self.name
 
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=100)
 
 
 class Family(models.Model):
@@ -24,10 +24,10 @@ class Family(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return '%s' % (self.name)
+        return self.name
 
-    group = models.ForeignKey(Group, on_delete=models.PROTECT)
-    name = models.CharField(max_length=30)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
 
 
 class Genus(models.Model):
@@ -37,10 +37,10 @@ class Genus(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return '%s' % (self.name)
+        return self.name
 
-    family = models.ForeignKey(Family, on_delete=models.PROTECT)
-    name = models.CharField(max_length=30)
+    family = models.ForeignKey(Family, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
 
 
 class Species(models.Model):
@@ -50,9 +50,9 @@ class Species(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return '%s' % (self.name)
+        return self.name
 
-    genus = models.ForeignKey(Genus, on_delete=models.PROTECT)
+    genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
 
@@ -93,12 +93,16 @@ class Plant(models.Model):
     custom_name = models.CharField(max_length=50, null=True, blank=True)
     species = models.ForeignKey(Species, on_delete=models.PROTECT)
     last_watered = models.DateTimeField(null=True)
+    last_fertilized = models.DateTimeField(null=True)
     sun_preference = models.ForeignKey(
         Sun_preference, on_delete=models.PROTECT)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    soil_preference = models.ForeignKey(Soil, on_delete=models.PROTECT)
+    soil = models.ForeignKey(Soil, on_delete=models.PROTECT)
 
-class PlantImages(models.Model):
+
+
+
+class Plant_image(models.Model):
     image = models.ImageField(
         upload_to='plant_images', verbose_name='Picture of a plant')
     plant = models.ForeignKey(
@@ -106,11 +110,11 @@ class PlantImages(models.Model):
     is_banner = models.BooleanField(default=False)
 
     def delete(self):
-            if self.image != '':
-                try:
-                    url_path=str(BASE_DIR)+'/cultura/media/'+str(self.image)
-                    
-                    os.remove(url_path)
-                except Exception as e:
-                    print(e)
-            super(PlantImages, self).delete()
+        if self.image != '':
+            try:
+                url_path = str(BASE_DIR)+'/herbarium/media/'+str(self.image)
+
+                os.remove(url_path)
+            except Exception as e:
+                print(e)
+        super(Plant_image, self).delete()
