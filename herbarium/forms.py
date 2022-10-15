@@ -13,7 +13,7 @@ class Plant_Form(forms.ModelForm):
 
     class Meta:
         model = Plant
-        exclude = ['last_watered']
+        exclude = ['last_watered', 'last_fertilized']
 
 class Plant_image_Form(forms.ModelForm):
     class Meta:

@@ -8,9 +8,9 @@ interface Data {
 
 export async function getStaticPaths() {
   const res = await fetch(
-    "http://localhost:3000/django/herbarium/groups/getAll"
+    `http://localhost:8000/groups/`
   );
-  const groups = (await res.json()).context;
+  const groups = (await res.json());
   const paths = groups.map((group: any) => ({
     params: { group: group.name },
   }));
@@ -20,9 +20,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: any) {
   const res = await fetch(
-    `http://localhost:3000/django/herbarium/${params.group}`
+    `http://localhost:8000/plants/scientific/${params.group}`
   );
-  const families = (await res.json()).context;
+  const families = (await res.json());
 
   return { props: { families, group: params.group } };
 }

@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import Router from "next/router";
+import { setCookie } from "cookies-next";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -7,6 +8,8 @@ type AuthContextType = {
   logout: () => Promise<void>;
   user: any;
   CsrfToken: string | null;
+  RefreshToken: string | null;
+  AccessToken: string | null;
 };
 
 type LoginDataType = {
@@ -35,37 +38,42 @@ export const AuthContext = createContext({} as AuthContextType);
 export function AuthProvider({ children }: any) {
   const [user, setUser] = useState(null);
   const [CsrfToken, setCsrfToken] = useState<string | null>(null);
+  const [RefreshToken, setRefreshToken] = useState<string | null>(null);
+  const [AccessToken, setAccessToken] = useState<string | null>(null);
   const isAuthenticated = !!user;
 
-  useEffect(() => {
-    async function fetchUser() {
-      if (CsrfToken) {
-        const headers = new Headers({
-          "Content-Type": "application/json",
-          "X-CSRFToken": CsrfToken,
-        });
+  async function fetchUser() {
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      "X-CSRFToken": CsrfToken ? CsrfToken : '',
+    });
 
-        const response = await fetch(
-          "http://localhost:3000/django/auth/authenticate",
-          {
-            method: "POST",
-            headers,
-          }
-        );
-        if (!response.ok) {
-          const data = await response.json()
-          setUser(null)
-          // return data.detail  
-        } else {
-          const { user } = await response.json();
-          setUser(user);
-        }
+    const response = await fetch("http://localhost:8000/auth/authenticate", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ token: AccessToken }),
+    });
 
-
-      }
+    console.log
+    if (!response.ok) {
+      return null;
+    } else {
+      const user = await response.json();
+      return "EU TENHO A FORÇA";
     }
+  }
+
+  useEffect(() => {
     fetchUser();
   }, [CsrfToken]);
+
+  useEffect(() => {
+    setCookie("RefreshToken", RefreshToken);
+  }, [RefreshToken]);
+
+  useEffect(() => {
+    setCookie("AccessToken", AccessToken);
+  }, [AccessToken]);
 
   useEffect(() => {
     setCsrfToken(getCookie("csrftoken"));
@@ -74,7 +82,7 @@ export function AuthProvider({ children }: any) {
   async function login({ username, password }: LoginDataType) {
     // TEM QUE VER DE DAR CATCH AQUI
 
-    const response = await fetch("http://localhost:3000/django/auth/login", {
+    const response = await fetch("http://localhost:8000/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -84,10 +92,16 @@ export function AuthProvider({ children }: any) {
     });
 
     const data = await response.json();
-    const { user } = data;
-    if (user) {
+    const { refresh, access } = data;
+
+    if (refresh) {
+      console.log('refresh', refresh)
+      setRefreshToken(refresh);
+      setAccessToken(access);
+      const user = await fetchUser();
+      console.log(user);
+
       setUser(user);
-      // setCsrfToken(getCookie("csrftoken"));
       Router.push("/");
     } else {
       console.log("deu merda");
@@ -118,7 +132,15 @@ export function AuthProvider({ children }: any) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, user, CsrfToken }}
+      value={{
+        isAuthenticated,
+        login,
+        logout,
+        user,
+        CsrfToken,
+        RefreshToken,
+        AccessToken,
+      }}
     >
       {children}
     </AuthContext.Provider>

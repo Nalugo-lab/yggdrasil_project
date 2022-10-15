@@ -1,80 +1,67 @@
 import type { NextPage } from "next";
-import styled from "styled-components";
+import {
+  Container,
+  ExtraInfo,
+  IconPlusName,
+  ImageCard,
+  Info,
+  Owner,
+  PlantCard,
+  PopularName,
+  ScientificName,
+  Title,
+} from "../../components/styled/styled-plants";
 
 interface Data {
-  banner: string | undefined;
-  owner__username: string;
-  popular_name: string;
-  custom_name: string;
-  complementary_name: string;
-  soil_preference__name: string;
-  sun_preference__name: string;
-  last_watered: any;
-  species__name: string;
-  species__genus__name: string;
-  species__genus__family__name: string;
-  species__genus__family__group__name: string;
+  owner: {
+    name: string;
+    username: string;
+    email: string;
+  };
+  soil: {
+    name: string;
+    description: string;
+  };
+  sun_preference: {
+    name: string;
+    description: string;
+  };
+  species: {
+    id: number;
+    name: string;
+    genus: {
+      id: number;
+      name: string;
+      family: {
+        id: number;
+        name: string;
+        group: {
+          id: number;
+          name: string;
+        };
+      };
+    };
+  };
+
+  banner: string;
+  popular_name: string | null;
+  custom_name: string | null;
+  complementary_name: string | null;
+  last_watered: string | null;
 }
 
-export const Container = styled.main`
-  display: flex;
-  flex-wrap: wrap;
-  padding: 3vh 3vw;
-  background-color: var(--background-secondary);
-  /* grid-template-columns: repeat(2, 1fr); */
-`;
+export async function getServerSideProps(request) {
+  const res = await fetch(`http://localhost:8000/plants`, {
+    headers: { "X-CSRFToken": request.req.cookies.csrftoken },
+  });
 
-const PlantCard = styled.div`
-  border: 5px solid var(--primary);
-  background-color: var(--secondary);
-  max-width: 620px;
-  min-width: 580px;
-  max-height: 220px;
-  margin: 8px;
-  padding: 8px;
-  border-radius: 10px;
-  display: grid;
-  grid-template-columns: 3fr 1.5fr;
-`;
+  // if (res.redirected) {
+  //   console.log("url: " + res.url);
 
-const Info = styled.div`
-  /* background-color: var(--alert); */
-`;
+  //   return { props: { plants: [] } };
+  // }
 
-const ImageCard = styled.div`
-  background-color: var(--info);
-  aspect-ratio: 1 / 1;
-  background-image: url(${(props: any) => props.src});
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100%;
-  width: 100%;
-  /* & img {
-    display: block;
-    width: 100%;
-    height: 100%; 
-    object-fit: contain;
-  } */
-`;
-
-const ScientificName = styled.span``;
-
-const PopularName = styled.span``;
-
-const ExtraInfo = styled.span``;
-
-const Title = styled.div``;
-
-const IconPlusName = styled.div``;
-
-const Owner = styled.div``;
-
-export async function getStaticProps() {
-  const res = await fetch(`http://localhost:3000/django/plants`);
-
-  const data = await res.json();
-  const plants = data.context;
+  const plants = await res.json();
 
   return { props: { plants } };
 }
@@ -86,26 +73,28 @@ const Home: NextPage = ({ plants }: any) => {
         <PlantCard key={index}>
           <Info>
             <Title>
-              <ScientificName>{`${e.species__genus__name} ${e.species__name}`}</ScientificName>{" "}
-              <ExtraInfo>{e.complementary_name}</ExtraInfo>
+              <ScientificName>{`Genus and species: ${e.species.genus.name} ${e.species.name}`}</ScientificName>{" "}
+              <ExtraInfo>
+                {"complementary name:" + e.complementary_name}
+              </ExtraInfo>
             </Title>
-            <PopularName>{e.popular_name}</PopularName>
+            <PopularName>{"popular name:" + e.popular_name}</PopularName>
             <IconPlusName>
-              <p>{e.soil_preference__name}</p>
+              <p>{"soil name:" + e.soil.name}</p>
               <img />
             </IconPlusName>
             <IconPlusName>
-              <p>{e.sun_preference__name}</p>
+              <p>{"sun_preference name:" + e.sun_preference.name}</p>
               <img />
             </IconPlusName>
             <IconPlusName>
-              <p>{e.last_watered}</p>
+              <p>{"last watered:" + e.last_watered}</p>
               <img />
             </IconPlusName>
-            <p>{e.species__genus__family__name}</p>
-            <p>{e.species__genus__family__group__name}</p>
+            <p>{"family name:" + e.species.genus.family.name}</p>
+            <p>{"group name:" + e.species.genus.family.group.name}</p>
             <Owner>
-              <p>{e.owner__username}</p>
+              <p>{"owner username:" + e.owner.username}</p>
               <img />
             </Owner>
           </Info>

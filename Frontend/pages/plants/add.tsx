@@ -5,21 +5,21 @@ import { AuthContext } from "../../components/AuthContext";
 import Router from "next/router";
 
 export async function getStaticProps() {
-  const groupsRes = await fetch(`http://localhost:3000/django/groups/`);
+  const groupsRes = await fetch(`http://localhost:8000/groups`);
 
   const sun_preferencesRes = await fetch(
-    `http://localhost:3000/django/sun_preferences`
+    `http://localhost:8000/sun_preferences`
   );
 
-  const soilsRes = await fetch(`http://localhost:3000/django/soils`);
+  const soilsRes = await fetch(`http://localhost:8000/soils`);
 
   // const form = await fetch(
   //   `http://localhost:3000/django/herbarium/soils/getAll`
   // )
 
-  const groups = (await groupsRes.json()).context;
-  const sun_preferences = (await sun_preferencesRes.json()).context;
-  const soils = (await soilsRes.json()).context;
+  const groups = await groupsRes.json();
+  const sun_preferences = await sun_preferencesRes.json();
+  const soils = await soilsRes.json();
 
   return { props: { groups, sun_preferences, soils } };
 }
@@ -93,6 +93,8 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (CsrfToken && isAuthenticated) {
       const headers = new Headers({
         "X-CSRFToken": CsrfToken,
+        // "Accept": "application/json",
+        // "Content-Type": "application/json"
       });
 
       const data = new FormData();
@@ -106,28 +108,45 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
       data.append("sun_preference", sun_preference);
       data.append("species", species);
 
-      const res = await fetch("http://localhost:3000/django/plants/", {
+      const res = await fetch("http://localhost:8000/plants/", {
         method: "POST",
+        // credentials: "include",
         headers,
         body: data,
       });
       if (res.ok) {
-        Router.push("/");
-      } else {
+        // Router.push("/");
+        console.log(res);
         const data = await res.json();
+
         console.log(data);
+      } else {
+        console.log(res);
+        try {
+          const data = await res.json();
+
+          console.log(data);
+        } catch {}
       }
     } else {
       console.log("tá querendo me enganar fdp?");
     }
   }
 
+  async function getFetch(url: string) {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  }
+
   useEffect(() => {
     if (group) {
       (async () => {
-        const response = await fetch(`http://localhost:3000/django/plants/scientific/${group}`);
-        const data = (await response.json()).context;
-        setFamilyData(data);
+        setFamilyData(
+          await getFetch(
+            `http://localhost:3000/django/plants/scientific/${group}`
+          )
+        );
         setFamily(undefined);
       })();
     }
@@ -136,11 +155,11 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
   useEffect(() => {
     if (family && group) {
       (async () => {
-        const response = await fetch(
-          `http://localhost:3000/django/plants/scientific/${group}/${family}`
+        setGenusData(
+          await getFetch(
+            `http://localhost:3000/django/plants/scientific/${group}/${family}`
+          )
         );
-        const data = (await response.json()).context;
-        setGenusData(data);
         setGenus(undefined);
       })();
     }
@@ -149,10 +168,9 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
   useEffect(() => {
     if (genus && family && group) {
       (async () => {
-        const response = await fetch(
+        const data = await getFetch(
           `http://localhost:3000/django/plants/scientific/${group}/${family}/${genus}`
         );
-        const data = (await response.json()).context;
         setSpeciesData(data);
         setSpecies(undefined);
       })();
@@ -258,6 +276,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
         <label htmlFor="photo">Plant photo</label>
         <input
           type="file"
+          accept="image/*"
           id="photo"
           name="photo"
           onChange={(e) => {

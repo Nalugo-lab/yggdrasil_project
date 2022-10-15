@@ -1,6 +1,8 @@
 from attr import field
 from rest_framework import serializers
 from yaml import serialize
+
+from accounts.serializers import UserSerializer
 from .models import *
 
 
@@ -51,6 +53,7 @@ class PlantSerializer(serializers.ModelSerializer):
     soil = SoilSerializer()
     sun_preference = Sun_preferenceSerializer()
     banner = serializers.SerializerMethodField("get_banner_url")
+    owner = UserSerializer()
 
     class Meta:
         model = Plant

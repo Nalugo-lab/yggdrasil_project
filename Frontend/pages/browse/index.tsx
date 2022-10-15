@@ -8,9 +8,9 @@ interface Data {
 
 export async function getStaticProps() {
   const res = await fetch(
-    `http://localhost:3000/django/herbarium/groups/getAll`
+    `http://localhost:8000/groups/`
   );
-  const groups = (await res.json()).context;
+  const groups = (await res.json());
 
   return { props: { groups } };
 }
