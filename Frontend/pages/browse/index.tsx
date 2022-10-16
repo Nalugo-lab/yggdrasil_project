@@ -11,7 +11,7 @@ export async function getStaticProps() {
     `http://localhost:8000/groups/`
   );
   const groups = (await res.json());
-
+    console.log(groups)
   return { props: { groups } };
 }
 

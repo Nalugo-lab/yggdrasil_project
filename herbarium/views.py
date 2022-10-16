@@ -1,3 +1,4 @@
+from socket import ALG_OP_DECRYPT
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 
@@ -14,38 +15,43 @@ from herbarium.forms import *
 
 
 class Group_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
 
 class Family_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Family.objects.all()
     serializer_class = FamilySerializer
 
 
 class Genus_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
 
 
 class Species_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
 
 
 class Soil_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Soil.objects.all()
     serializer_class = SoilSerializer
 
 
 class Sun_preference_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Sun_preference.objects.all()
     serializer_class = Sun_preferenceSerializer
 
-# @permission_classes([IsAuthenticated])
-
 
 class Plant_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Plant.objects.all()
     serializer_class = PlantSerializer
 

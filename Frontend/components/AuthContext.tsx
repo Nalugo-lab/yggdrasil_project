@@ -1,11 +1,12 @@
 import { createContext, useEffect, useState } from "react";
 import Router from "next/router";
-import { setCookie } from "cookies-next";
+import jwt_decode from "jwt-decode";
 
 type AuthContextType = {
   isAuthenticated: boolean;
   login: (data: any) => Promise<void>;
   logout: () => Promise<void>;
+  authFetch: (url: string, method: string, body: string | FormData) => Promise<Response>;
   user: any;
   CsrfToken: string | null;
   RefreshToken: string | null;
@@ -43,9 +44,14 @@ export function AuthProvider({ children }: any) {
   const isAuthenticated = !!user;
 
   async function fetchUser() {
+    if (AccessToken == null || AccessToken == "null") {
+      setUser(null);
+      return;
+    }
+
     const headers = new Headers({
       "Content-Type": "application/json",
-      "X-CSRFToken": CsrfToken ? CsrfToken : '',
+      "X-CSRFToken": CsrfToken ? CsrfToken : "",
     });
 
     const response = await fetch("http://localhost:8000/auth/authenticate", {
@@ -54,29 +60,29 @@ export function AuthProvider({ children }: any) {
       body: JSON.stringify({ token: AccessToken }),
     });
 
-    console.log
-    if (!response.ok) {
-      return null;
-    } else {
-      const user = await response.json();
-      return "EU TENHO A FORÇA";
-    }
+    if (response.ok) setUser(jwt_decode<any>(AccessToken).user_id);
+    else setUser(null);
   }
 
-  useEffect(() => {
-    fetchUser();
-  }, [CsrfToken]);
+  // useEffect(() => {
+  //   console.log(user);
+  // }, [user]);
 
   useEffect(() => {
-    setCookie("RefreshToken", RefreshToken);
+    if (!RefreshToken) return;
+    localStorage.setItem("RefreshToken", RefreshToken);
   }, [RefreshToken]);
 
   useEffect(() => {
-    setCookie("AccessToken", AccessToken);
+    if (!AccessToken) return;
+    localStorage.setItem("AccessToken", AccessToken);
+    fetchUser();
   }, [AccessToken]);
 
   useEffect(() => {
     setCsrfToken(getCookie("csrftoken"));
+    setAccessToken(localStorage.getItem("AccessToken"));
+    setRefreshToken(localStorage.getItem("RefreshToken"));
   }, []);
 
   async function login({ username, password }: LoginDataType) {
@@ -94,14 +100,9 @@ export function AuthProvider({ children }: any) {
     const data = await response.json();
     const { refresh, access } = data;
 
-    if (refresh) {
-      console.log('refresh', refresh)
+    if (response.ok) {
       setRefreshToken(refresh);
       setAccessToken(access);
-      const user = await fetchUser();
-      console.log(user);
-
-      setUser(user);
       Router.push("/");
     } else {
       console.log("deu merda");
@@ -111,23 +112,29 @@ export function AuthProvider({ children }: any) {
   async function logout() {
     // TEM QUE VER DE DAR CATCH AQUI
 
-    if (CsrfToken) {
-      const headers = new Headers({
-        "Content-Type": "application/json",
-        "X-CSRFToken": CsrfToken,
-      });
+    setUser(null);
+    setCsrfToken(getCookie("csrftoken"));
+    setRefreshToken(null);
+    setAccessToken(null);
 
-      await fetch("http://localhost:3000/django/auth/logout", {
-        method: "POST",
-        headers,
-      });
+    Router.push("/login");
+  }
 
-      setUser(null);
-      setCsrfToken(getCookie("csrftoken"));
-      Router.push("/login");
-    } else {
-      Router.push("/");
-    }
+  async function authFetch(url: string, method: string, body: string | FormData) {
+    if (!isAuthenticated) return;
+
+    const headers = new Headers({
+      // "X-CSRFToken": CsrfToken,
+      Authorization: "Bearer " + String(AccessToken),
+      // "Accept": "application/json",
+      // "Content-Type": "application/json"
+    });
+
+    return fetch(url, {
+      method,
+      headers,
+      body,
+    });
   }
 
   return (
@@ -136,6 +143,7 @@ export function AuthProvider({ children }: any) {
         isAuthenticated,
         login,
         logout,
+        authFetch,
         user,
         CsrfToken,
         RefreshToken,

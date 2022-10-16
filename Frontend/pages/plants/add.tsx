@@ -5,17 +5,13 @@ import { AuthContext } from "../../components/AuthContext";
 import Router from "next/router";
 
 export async function getStaticProps() {
-  const groupsRes = await fetch(`http://localhost:8000/groups`);
+  const groupsRes = await fetch(`http://localhost:8000/groups/`);
 
   const sun_preferencesRes = await fetch(
-    `http://localhost:8000/sun_preferences`
+    `http://localhost:8000/sun_preferences/`
   );
 
-  const soilsRes = await fetch(`http://localhost:8000/soils`);
-
-  // const form = await fetch(
-  //   `http://localhost:3000/django/herbarium/soils/getAll`
-  // )
+  const soilsRes = await fetch(`http://localhost:8000/soils/`);
 
   const groups = await groupsRes.json();
   const sun_preferences = await sun_preferencesRes.json();
@@ -67,13 +63,14 @@ function Select({
 }
 
 const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
-  const { isAuthenticated, CsrfToken } = useContext(AuthContext);
+  const { isAuthenticated, AccessToken, authFetch } =
+    useContext(AuthContext);
 
   const [popular_name, setPopular_name] = useState("");
   const [custom_name, setCustom_name] = useState("");
   const [complementary_name, setComplementary_name] = useState("");
 
-  const [soil_preference, setSoil_preference] = useState(undefined);
+  const [soil, setSoil] = useState(undefined);
   const [sun_preference, setSun_preference] = useState(undefined);
 
   const [species, setSpecies] = useState(undefined);
@@ -90,51 +87,44 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
   async function submitForm(e: SyntheticEvent) {
     e.preventDefault();
 
-    if (CsrfToken && isAuthenticated) {
-      const headers = new Headers({
-        "X-CSRFToken": CsrfToken,
-        // "Accept": "application/json",
-        // "Content-Type": "application/json"
-      });
-
-      const data = new FormData();
-      if (!photoFile || !species || !soil_preference || !sun_preference) return;
-      data.append("image", photoFile);
-
-      data.append("popular_name", popular_name);
-      data.append("custom_name", custom_name);
-      data.append("complementary_name", complementary_name);
-      data.append("soil_preference", soil_preference);
-      data.append("sun_preference", sun_preference);
-      data.append("species", species);
-
-      const res = await fetch("http://localhost:8000/plants/", {
-        method: "POST",
-        // credentials: "include",
-        headers,
-        body: data,
-      });
-      if (res.ok) {
-        // Router.push("/");
-        console.log(res);
-        const data = await res.json();
-
-        console.log(data);
-      } else {
-        console.log(res);
-        try {
-          const data = await res.json();
-
-          console.log(data);
-        } catch {}
-      }
-    } else {
+    if (!isAuthenticated) {
       console.log("tá querendo me enganar fdp?");
+      return;
     }
+    if (!photoFile || !species || !soil || !sun_preference) return;
+
+    const data = new FormData();
+    data.append("image", photoFile);
+
+    data.append("popular_name", popular_name);
+    data.append("custom_name", custom_name);
+    data.append("complementary_name", complementary_name);
+    data.append("soil", soil);
+    data.append("sun_preference", sun_preference);
+    data.append("species", species);
+
+    const response = await authFetch("http://localhost:8000/plants/", "POST", data);
+
+    if (response.ok) {
+      Router.push("/");
+      return;
+    }
+
+    console.log(response);
+    try {
+      const data = await response.json();
+      console.log(data);
+    } catch {}
   }
 
   async function getFetch(url: string) {
-    const response = await fetch(url);
+    if (!isAuthenticated) return;
+
+    const headers = new Headers({
+      Authorization: "Bearer " + String(AccessToken),
+    });
+
+    const response = await fetch(url, { headers });
     const data = await response.json();
     return data;
   }
@@ -143,9 +133,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (group) {
       (async () => {
         setFamilyData(
-          await getFetch(
-            `http://localhost:3000/django/plants/scientific/${group}`
-          )
+          await getFetch(`http://localhost:8000/plants/scientific/${group}`)
         );
         setFamily(undefined);
       })();
@@ -157,7 +145,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
       (async () => {
         setGenusData(
           await getFetch(
-            `http://localhost:3000/django/plants/scientific/${group}/${family}`
+            `http://localhost:8000/plants/scientific/${group}/${family}`
           )
         );
         setGenus(undefined);
@@ -169,7 +157,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (genus && family && group) {
       (async () => {
         const data = await getFetch(
-          `http://localhost:3000/django/plants/scientific/${group}/${family}/${genus}`
+          `http://localhost:8000/plants/scientific/${group}/${family}/${genus}`
         );
         setSpeciesData(data);
         setSpecies(undefined);
@@ -229,10 +217,10 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
           name="soil"
           id="soil"
           data={soils}
-          value={soil_preference}
+          value={soil}
           keyIndex="id"
           valueIndex="name"
-          handleChange={setSoil_preference}
+          handleChange={setSoil}
         ></Select>
 
         <label htmlFor="sun_preference">Sun preference</label>

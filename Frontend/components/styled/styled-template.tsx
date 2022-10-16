@@ -6,6 +6,30 @@ export const ThemeSwitcher = styled.button`
   padding: 4px;
 `;
 
+export const AccountManager = styled.div`
+  position: relative;
+`;
+
+interface AccountManagerOptionsProps {
+  isOpen: boolean;
+}
+
+export const AccountManagerOptions = styled.ul<AccountManagerOptionsProps>`
+  display: ${(props: any) => props.isOpen ? 'block' : 'none'};
+  position: absolute;
+  background-color: red;
+  padding: 8px;
+  margin-top: 16px;
+  right: 50%;
+  transform: translateX(50%);
+`;
+
+export const AccountManagerButton = styled.div`
+  & img {
+    filter: var(--inverse-inverse);
+  }
+`;
+
 export const ThemeSwitcherWrapper = styled.div`
   margin-right: auto;
   display: flex;

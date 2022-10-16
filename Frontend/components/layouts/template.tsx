@@ -9,9 +9,12 @@ import {
   SocialMediaIcon,
   ThemeSwitcher,
   ThemeSwitcherWrapper,
+  AccountManager,
+  AccountManagerButton,
+  AccountManagerOptions,
 } from "../styled/styled-template";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../AuthContext";
 
 interface TemplateProps<P = any> {
@@ -26,6 +29,8 @@ const Template = ({
   currentTheme,
 }: TemplateProps) => {
   const { isAuthenticated } = useContext(AuthContext);
+  const [isOpen, setIsOpen] = useState(false);
+
   const utilsLinks = !isAuthenticated ? (
     <>
       <li>
@@ -40,11 +45,13 @@ const Template = ({
       </li>
     </>
   ) : (
-    <li>
-      <Link href="/logout">
-        <a>LOGOUT</a>
-      </Link>
-    </li>
+    <>
+      <li>
+        <Link href="/logout">
+          <a>LOGOUT</a>
+        </Link>
+      </li>
+    </>
   );
 
   return (
@@ -63,7 +70,7 @@ const Template = ({
           <ul>{utilsLinks}</ul>
         </Navbar>
         <ThemeSwitcherWrapper>
-          <ThemeSwitcher onClick={() => toggleDarkMode()}>
+          <ThemeSwitcher onClick={toggleDarkMode}>
             <img
               src={
                 currentTheme == "dark"
@@ -73,6 +80,12 @@ const Template = ({
             />
           </ThemeSwitcher>
         </ThemeSwitcherWrapper>
+        <AccountManager onMouseEnter={()=>setIsOpen(true)} onMouseLeave={()=>setIsOpen(false)} >
+          <AccountManagerButton onClick={()=>setIsOpen(!isOpen)} >
+            <img src={"/icons/account.svg"} />
+          </AccountManagerButton>
+          <AccountManagerOptions isOpen={isOpen}>{utilsLinks}</AccountManagerOptions>
+        </AccountManager>
       </Header>
 
       {children}
