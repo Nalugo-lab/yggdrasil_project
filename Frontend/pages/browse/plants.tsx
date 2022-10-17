@@ -51,8 +51,9 @@ interface Data {
 }
 
 export async function getServerSideProps(request) {
+  console.log(request.req.headers)
   const res = await fetch(`http://localhost:8000/plants`, {
-    headers: { "X-CSRFToken": request.req.cookies.csrftoken },
+    // headers: { "X-CSRFToken": request.req.cookies.csrftoken },
   });
 
   // if (res.redirected) {

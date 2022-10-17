@@ -133,7 +133,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (group) {
       (async () => {
         setFamilyData(
-          await getFetch(`http://localhost:8000/plants/scientific/${group}`)
+          await getFetch(`http://localhost:8000/scientific/${group}`)
         );
         setFamily(undefined);
       })();
@@ -145,7 +145,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
       (async () => {
         setGenusData(
           await getFetch(
-            `http://localhost:8000/plants/scientific/${group}/${family}`
+            `http://localhost:8000/scientific/${group}/${family}`
           )
         );
         setGenus(undefined);
@@ -157,7 +157,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (genus && family && group) {
       (async () => {
         const data = await getFetch(
-          `http://localhost:8000/plants/scientific/${group}/${family}/${genus}`
+          `http://localhost:8000/scientific/${group}/${family}/${genus}`
         );
         setSpeciesData(data);
         setSpecies(undefined);

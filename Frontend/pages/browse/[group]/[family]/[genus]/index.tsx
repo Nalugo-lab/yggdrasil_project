@@ -8,14 +8,14 @@ interface Data {
 
 export async function getStaticPaths() {
   const res = await fetch(
-    "http://localhost:3000/django/herbarium/genera/getAll"
+    "http://localhost:8000/genera"
   );
-  const species = (await res.json()).context;
+  const species = (await res.json());
 
   const paths = species.map((speciess: any) => ({
     params: {
-      group: speciess.family__group__name,
-      family: speciess.family__name,
+      group: speciess.family.group.name,
+      family: speciess.family.name,
       genus: speciess.name,
     },
   }));
@@ -25,9 +25,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: any) {
   const res = await fetch(
-    `http://localhost:3000/django/herbarium/${params.group}/${params.family}/${params.genus}`
+    `http://localhost:8000/scientific/${params.group}/${params.family}/${params.genus}`
   );
-  const species = (await res.json()).context;
+  const species = (await res.json());
   return {
     props: {
       species,

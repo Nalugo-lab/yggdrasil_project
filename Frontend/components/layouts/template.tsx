@@ -14,7 +14,7 @@ import {
   AccountManagerOptions,
 } from "../styled/styled-template";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext";
 
 interface TemplateProps<P = any> {
@@ -31,6 +31,11 @@ const Template = ({
   const { isAuthenticated } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    document.querySelector("body")!.addEventListener("click", () => {
+      setIsOpen(false)
+    });
+  }, []);
   const utilsLinks = !isAuthenticated ? (
     <>
       <li>
@@ -46,6 +51,26 @@ const Template = ({
     </>
   ) : (
     <>
+      <li>
+        <Link href="/logout">
+          <a>Profile</a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/browse/plants">
+          <a>My Plants</a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/">
+          <a>Settings</a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/">
+          <a>Report a problem</a>
+        </Link>
+      </li>
       <li>
         <Link href="/logout">
           <a>LOGOUT</a>
@@ -67,7 +92,7 @@ const Template = ({
         </Link>
 
         <Navbar>
-          <ul>{utilsLinks}</ul>
+          {/* <ul>{utilsLinks}</ul> */}
         </Navbar>
         <ThemeSwitcherWrapper>
           <ThemeSwitcher onClick={toggleDarkMode}>
@@ -80,11 +105,19 @@ const Template = ({
             />
           </ThemeSwitcher>
         </ThemeSwitcherWrapper>
-        <AccountManager onMouseEnter={()=>setIsOpen(true)} onMouseLeave={()=>setIsOpen(false)} >
-          <AccountManagerButton onClick={()=>setIsOpen(!isOpen)} >
+        <AccountManager>
+          <AccountManagerButton
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log(isOpen)
+              setIsOpen(!isOpen);
+            }}
+          >
             <img src={"/icons/account.svg"} />
           </AccountManagerButton>
-          <AccountManagerOptions isOpen={isOpen}>{utilsLinks}</AccountManagerOptions>
+          <AccountManagerOptions isOpen={isOpen}>
+            {utilsLinks}
+          </AccountManagerOptions>
         </AccountManager>
       </Header>
 

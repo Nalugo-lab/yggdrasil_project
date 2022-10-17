@@ -8,20 +8,6 @@ interface Data {
 }
 
 export async function getStaticPaths() {
-  //   const res = await fetch(
-  //     "http://localhost:3000/django/herbarium/species/getAll"
-  //   );
-
-  //   const speciments = (await res.json()).context;
-  //   const paths = speciments.map((speciment: any) => ({
-  //     params: {
-  //       group: speciment.genus__family__group__name,
-  //       family: speciment.genus__family__name,
-  //       genus: speciment.genus__name,
-  //       species: speciment.name,
-  //     },
-  //   }));
-
   return { paths: [], fallback: true };
 }
 
@@ -30,7 +16,7 @@ export async function getStaticProps({ params }: any) {
   const res = await fetch(
     `http://localhost:3000/django/herbarium/${params.group}/${params.family}/${params.genus}/${params.species}`
   );
-  const speciment = (await res.json()).context;
+  const speciment = (await res.json());
   return {
     props: {
       speciment,

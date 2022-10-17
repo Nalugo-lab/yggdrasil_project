@@ -15,12 +15,17 @@ interface AccountManagerOptionsProps {
 }
 
 export const AccountManagerOptions = styled.ul<AccountManagerOptionsProps>`
-  display: ${(props: any) => props.isOpen ? 'block' : 'none'};
+  display: ${(props: any) => (props.isOpen ? "flex" : "none")};
   position: absolute;
-  background-color: red;
   padding: 8px;
-  margin-top: 16px;
+  margin-top: 32px;
   right: 50%;
+  width: 256px;
+  flex-direction: column;
+  gap: 8px;
+  background-color: var(--background-primary);
+  border: 6px solid (--text-secondary);
+
   transform: translateX(50%);
 `;
 

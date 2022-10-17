@@ -32,7 +32,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <AuthProvider>
         <ThemeProvider theme={Theme}>
           <GlobalStyle />
-          <Template
+          <Template 
             currentTheme={theme}
             toggleDarkMode={() => {
               window.__setPreferredTheme(theme == "dark" ? "light" : "dark");
@@ -40,7 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               return true;
             }}
           >
-            <Component {...pageProps} />
+            <Component  {...pageProps} />
           </Template>
         </ThemeProvider>
       </AuthProvider>

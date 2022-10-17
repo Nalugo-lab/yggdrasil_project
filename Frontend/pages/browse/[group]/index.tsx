@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: any) {
   const res = await fetch(
-    `http://localhost:8000/plants/scientific/${params.group}`
+    `http://localhost:8000/scientific/${params.group}`
   );
   const families = (await res.json());
 

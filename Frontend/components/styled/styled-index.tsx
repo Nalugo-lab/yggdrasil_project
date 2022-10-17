@@ -1,9 +1,11 @@
 import styled from "styled-components";
 
 export const Container = styled.main`
-  display: grid;
-  /* grid-template-columns: repeat(3, 1fr); */
-  padding: 3vh 3vw;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px;
+  font-size: var(--font-size-xl);
   background-color: var(--background-secondary);
   column-gap: 48px;
   & input, select {

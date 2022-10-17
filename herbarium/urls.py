@@ -19,11 +19,9 @@ router.register('plants', views.Plant_ViewSet)
 urlpatterns = [
     path('', include(router.urls)),
 
-    path('test', views.test, name='test'),
-    path('plants/scientific/<group>', views.GetFamilies, name='get_families'),
-    path('plants/scientific/<group>/<family>', views.GetGenera, name='get_genera'),
-    path('plants/scientific/<group>/<family>/<genus>', views.GetSpecies, name='get_species'),
-    path('plants/scientific/<group>/<family>/<genus>/<species>', views.GetSpecimen, name='get_species'),
+    path('scientific/<group>', views.Family_List.as_view(), name='get_families'),
+    path('scientific/<group>/<family>', views.Genus_List.as_view(), name='get_genera'),
+    path('scientific/<group>/<family>/<genus>', views.Species_List.as_view(), name='get_species'),
 ]
 
     # path('plants', views.PlantView.as_view(), name='plantView'),

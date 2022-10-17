@@ -3,7 +3,7 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponse
 
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.decorators import *
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -19,6 +19,52 @@ class Group_ViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+    # def list(self, request):
+    #     pass
+
+    # def retrieve(self, request, pk=None):
+    #     pass
+
+
+@api_view(('GET',))
+def GetFamilies(request, group):
+    try:
+        group = int(group)
+    except ValueError:
+        pass
+
+    if isinstance(group, int):
+        GROUP = Group.objects.get(id=group)
+
+    else:
+        GROUP = Group.objects.get(name=group)
+
+    FAMILIES = list(Family.objects.filter(group=GROUP).values())
+
+    return Response(FAMILIES)
+
+
+class Family_List(generics.ListAPIView):
+    serializer_class = FamilySerializer
+    permission_classes = [AllowAny]
+    lookup_url_kwarg = "group"
+
+    def get_queryset(self):
+        group = self.kwargs.get(self.lookup_url_kwarg)
+
+        try:
+            group = int(group)
+
+        except ValueError:
+            pass
+
+        if (isinstance(group, int)):
+            group = Group.objects.get(id=group)
+        else:
+            group = Group.objects.get(name=group)
+
+        return Family.objects.filter(group=group)
+
 
 class Family_ViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
@@ -26,10 +72,68 @@ class Family_ViewSet(viewsets.ModelViewSet):
     serializer_class = FamilySerializer
 
 
+class Genus_List(generics.ListAPIView):
+    serializer_class = GenusSerializer
+    permission_classes = [AllowAny]
+    lookup_url_kwarg = "family"
+
+    def get_queryset(self):
+        group = self.kwargs.get("group")
+        family = self.kwargs.get(self.lookup_url_kwarg)
+
+        try:
+            group = int(group)
+            family = int(family)
+
+        except ValueError:
+            pass
+
+        if (isinstance(group, int)):
+            group = Group.objects.get(id=group)
+            family = Family.objects.get(id=family)
+
+        else:
+            group = Group.objects.get(name=group)
+            family = Family.objects.get(name=family)
+
+        return Genus.objects.filter(family=family, family__group=group)
+
+
 class Genus_ViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
+
+
+class Species_List(generics.ListAPIView):
+    serializer_class = SpeciesSerializer
+    permission_classes = [AllowAny]
+    lookup_url_kwarg = "genus"
+
+    def get_queryset(self):
+        group = self.kwargs.get("group")
+        family = self.kwargs.get("family")
+        genus = self.kwargs.get(self.lookup_url_kwarg)
+
+        try:
+            group = int(group)
+            family = int(family)
+            genus = int(genus)
+
+        except ValueError:
+            pass
+
+        if (isinstance(group, int)):
+            group = Group.objects.get(id=group)
+            family = Family.objects.get(id=family)
+            genus = Genus.objects.get(id=genus)
+
+        else:
+            group = Group.objects.get(name=group)
+            family = Family.objects.get(name=family)
+            genus = Genus.objects.get(name=genus, family=family)
+
+        return Species.objects.filter(genus=genus, genus__family=family, genus__family__group=group)
 
 
 class Species_ViewSet(viewsets.ModelViewSet):
@@ -59,11 +163,8 @@ class Plant_ViewSet(viewsets.ModelViewSet):
     #     pass
 
     def create(self, request):
-        print(request.COOKIES)
-        print(request.headers)
 
         data = request.POST.copy()
-        print(request.user)
         data['owner'] = request.user
         form = Plant_Form(data)
 
@@ -92,91 +193,3 @@ class Plant_ViewSet(viewsets.ModelViewSet):
 
     # def destroy(self, request, pk=None):
     #     pass
-
-
-@api_view(('GET',))
-def GetFamilies(request, group):
-    try:
-        group = int(group)
-    except ValueError:
-        pass
-
-    if isinstance(group, int):
-        GROUP = Group.objects.get(id=group)
-
-    else:
-        GROUP = Group.objects.get(name=group)
-
-    FAMILIES = list(Family.objects.filter(group=GROUP).values())
-
-    return Response(FAMILIES)
-
-
-@api_view(('GET',))
-def GetGenera(request, group, family):
-    try:
-        group = int(group)
-        family = int(family)
-
-    except ValueError:
-        pass
-
-    if (isinstance(group, int)):
-        GROUP = Group.objects.get(id=group)
-        FAMILY = Family.objects.get(id=family)
-
-    if (isinstance(group, str)):
-        GROUP = Group.objects.get(name=group)
-        FAMILY = Family.objects.get(name=family)
-
-    GENERA = list(Genus.objects.filter(
-        family=FAMILY, family__group=GROUP).values())
-
-    return Response(GENERA)
-
-
-@api_view(('GET',))
-def GetSpecies(request, group, family, genus):
-    try:
-        group = int(group)
-        family = int(family)
-        genus = int(genus)
-
-    except ValueError:
-        pass
-
-    if (isinstance(group, int)):
-        GROUP = Group.objects.get(id=group)
-        FAMILY = Family.objects.get(id=family)
-        GENUS = Genus.objects.get(id=genus)
-
-    if (isinstance(group, str)):
-        GROUP = Group.objects.get(name=group)
-        FAMILY = Family.objects.get(name=family)
-        GENUS = Genus.objects.get(name=genus)
-
-    SPECIES = list(Species.objects.filter(
-        genus=GENUS, genus__family=FAMILY, genus__family__group=GROUP).values())
-
-    return Response(SPECIES)
-
-
-@api_view(('GET',))
-def GetSpecimen(request, group, family, genus, species):
-    SPECIES = Species.objects.get(
-        name=species, genus__name=genus, genus__family__name=family)
-
-    data = model_to_dict(SPECIES)
-    data['genus'] = genus
-    data['family'] = family
-    data['group'] = group
-
-    return Response(data)
-
-
-def test(request):
-    print(request.headers)
-    print(request.user)
-
-    # return Response({'hugo': 'foda'})
-    return HttpResponse('hi')
