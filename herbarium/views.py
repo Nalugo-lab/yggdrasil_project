@@ -159,8 +159,8 @@ class Plant_ViewSet(viewsets.ModelViewSet):
     queryset = Plant.objects.all()
     serializer_class = PlantSerializer
 
-    # def list(self, request):
-    #     pass
+    def list(self, request):
+        return Response(PlantSerializer(Plant.objects.filter(owner=request.user), many=True).data)
 
     def create(self, request):
 

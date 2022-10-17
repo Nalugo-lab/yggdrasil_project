@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import Router from "next/router";
 import jwt_decode from "jwt-decode";
+import { setCookie } from "cookies-next";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -71,11 +72,13 @@ export function AuthProvider({ children }: any) {
   useEffect(() => {
     if (!RefreshToken) return;
     localStorage.setItem("RefreshToken", RefreshToken);
+    setCookie("RefreshToken", RefreshToken)
   }, [RefreshToken]);
 
   useEffect(() => {
     if (!AccessToken) return;
     localStorage.setItem("AccessToken", AccessToken);
+    setCookie("AccessToken", AccessToken)
     fetchUser();
   }, [AccessToken]);
 

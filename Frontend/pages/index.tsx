@@ -4,9 +4,7 @@ import { Container } from "../components/styled/styled-index";
 const Home: NextPage = () => {
   return (
     <Container>
-      <a href="/browse">browse</a>
-      <a href="/plants/add">add</a>
-      <a href="/browse/plants">all plants</a>
+      <h1>TUDO TÁ AGR NA NAVBAR MANO, PRECISA NEM DE INDEX</h1>
     </Container>
   );
 };

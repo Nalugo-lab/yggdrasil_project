@@ -96,10 +96,8 @@ class Plant(models.Model):
     last_fertilized = models.DateTimeField(null=True)
     sun_preference = models.ForeignKey(
         Sun_preference, on_delete=models.PROTECT)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     soil = models.ForeignKey(Soil, on_delete=models.PROTECT)
-
-
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Plant_image(models.Model):

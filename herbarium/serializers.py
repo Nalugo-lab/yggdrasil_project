@@ -59,7 +59,7 @@ class PlantSerializer(serializers.ModelSerializer):
         model = Plant
         fields = ('owner', 'soil', 'sun_preference', 'species', 'banner',
                   'id', 'popular_name', 'custom_name', 'complementary_name',
-                  'last_watered')
+                  'last_watered', 'last_fertilized')
 
     def get_banner_url(self, plant):
         banner = Plant_image.objects.get(plant=plant, is_banner=True)

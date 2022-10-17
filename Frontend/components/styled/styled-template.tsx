@@ -1,14 +1,17 @@
 import styled from "styled-components";
 
 export const ThemeSwitcher = styled.button`
-  border: 3px solid var(--text);
   color: var(--text);
-  padding: 4px;
 `;
 
 export const AccountManager = styled.div`
   position: relative;
 `;
+
+export const IconWrapper = styled.div`
+  width: 24px;
+  filter: var(--inverse-inverse);
+`
 
 interface AccountManagerOptionsProps {
   isOpen: boolean;
@@ -36,7 +39,7 @@ export const AccountManagerButton = styled.div`
 `;
 
 export const ThemeSwitcherWrapper = styled.div`
-  margin-right: auto;
+  /* margin-right: auto; */
   display: flex;
   filter: var(--inverse-inverse);
 `;
@@ -50,7 +53,7 @@ export const Header = styled.header`
   align-items: center;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-medium);
-  max-width: 1150px;
+  max-width: 975px;
 
   @media (max-width: 700px) {
     flex-direction: column;
@@ -82,21 +85,13 @@ export const LogoWrapper = styled.div`
 `;
 
 export const Navbar = styled.nav`
+  display: flex;
+  gap: 22px;
+  justify-content: flex-end;
+  vertical-align: middle;
+  align-items: center;
   flex-grow: 1;
   vertical-align: middle;
-  margin: 0 64px;
-
-  ul {
-    /* width: auto; */
-    display: flex;
-    gap: 32px;
-  }
-  a {
-    color: inherit;
-  }
-  a:hover {
-    color: var(--primary);
-  }
 `;
 
 export const Footer = styled.footer`
