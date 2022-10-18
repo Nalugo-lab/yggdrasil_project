@@ -1,7 +1,7 @@
 import { CallTracker } from "assert";
 import type { NextPage } from "next";
 import Router from "next/router";
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Container } from "../components/styled/styled-index";
 
 // export async function getStaticProps() {
@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   const [password, setPassword] = useState("");
   const [ConfirmPassword, setConfirmPassword] = useState("");
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
 
     if (password != ConfirmPassword) return;

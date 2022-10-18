@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Link from "next/link";
+import { NextRequest } from "next/server";
 import {
   Container,
   ExtraInfo,
@@ -52,10 +53,10 @@ interface Data {
   last_watered: string | null;
 }
 
-export async function getServerSideProps(request) {
+export async function getServerSideProps({ req }: any) {
   const res = await fetch(`http://localhost:8000/plants`, {
     headers: {
-      Authorization: "Bearer " + String(request.req.cookies.AccessToken),
+      Authorization: "Bearer " + String(req.cookies.AccessToken),
     },
   });
 
@@ -74,10 +75,9 @@ const Home: NextPage = ({ plants }: any) => {
   return (
     <Container>
       {plants.map((e: Data, index: number) => (
-        <Link href={`/plants/${e.id}`} key={index}>
-            <a>
-
-          <PlantCard >
+        <Link href={`/plants/plant/${e.id}`} key={index}>
+          <a>
+            <PlantCard>
               <Info>
                 <Title>
                   <ScientificName>{`Genus and species: ${e.species.genus.name} ${e.species.name}`}</ScientificName>{" "}
@@ -106,9 +106,8 @@ const Home: NextPage = ({ plants }: any) => {
                 </Owner>
               </Info>
               <ImageCard src={"http://localhost:8000" + e.banner}></ImageCard>
-          </PlantCard>
+            </PlantCard>
           </a>
-
         </Link>
       ))}
     </Container>

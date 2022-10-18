@@ -19,7 +19,7 @@ export const PlantCard = styled.div`
   border-radius: 10px;
   display: grid;
   grid-template-columns: 3fr 1.5fr;
-  font-size: 11px;
+  font-size: 1rem;
 `;
 
 export const Info = styled.div`
@@ -47,11 +47,11 @@ export const ImageCard = styled.div<ImageCardProps>`
 } */
 `;
 
-export const ScientificName = styled.span``;
+export const ScientificName = styled.p``;
 
-export const PopularName = styled.span``;
+export const PopularName = styled.p``;
 
-export const ExtraInfo = styled.span``;
+export const ExtraInfo = styled.p``;
 
 export const Title = styled.div``;
 

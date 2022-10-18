@@ -12,14 +12,13 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: any) {
-  console.log(params);
   const res = await fetch(
     `http://localhost:3000/django/herbarium/${params.group}/${params.family}/${params.genus}/${params.species}`
   );
-  const speciment = (await res.json());
+  const specimen = (await res.json());
   return {
     props: {
-      speciment,
+      specimen,
       group: params.group,
       family: params.family,
       genus: params.genus,
@@ -28,11 +27,11 @@ export async function getStaticProps({ params }: any) {
   };
 }
 
-const Home: NextPage = ({ speciment }: any) => {
+const Home: NextPage = ({ specimens: specimen }: any) => {
   const router = useRouter();
   let daUmaAjudinhaAe = [];
-  for (const key in speciment) {
-    daUmaAjudinhaAe.push({ key, value: speciment[key] });
+  for (const key in specimen) {
+    daUmaAjudinhaAe.push({ key, value: specimen[key] });
   }
 
   if (router.isFallback) {

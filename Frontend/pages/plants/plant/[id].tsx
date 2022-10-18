@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { Container } from "../../components/styled/styled-plants";
+import { Container } from "../../../components/styled/styled-plants";
 
 interface Data {
     owner: {
@@ -40,8 +40,6 @@ interface Data {
 }
 
 export async function getServerSideProps({ req, params }: any) {
-  console.log(params);
-  console.log(req);
 
   const res = await fetch(`http://localhost:8000/plants/${params.id}`, {
     headers: {
@@ -54,7 +52,6 @@ export async function getServerSideProps({ req, params }: any) {
 }
 
 const Home: NextPage = ({ plant }: any) => {
-  console.log(plant);
   return (
     <Container>
         <div>

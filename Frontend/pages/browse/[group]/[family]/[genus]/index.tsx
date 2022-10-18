@@ -12,11 +12,11 @@ export async function getStaticPaths() {
   );
   const species = (await res.json());
 
-  const paths = species.map((speciess: any) => ({
+  const paths = species.map((species: any) => ({
     params: {
-      group: speciess.family.group.name,
-      family: speciess.family.name,
-      genus: speciess.name,
+      group: species.family.group.name,
+      family: species.family.name,
+      genus: species.name,
     },
   }));
 

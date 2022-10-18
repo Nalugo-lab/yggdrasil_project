@@ -28,8 +28,12 @@ export const AccountManagerOptions = styled.ul<AccountManagerOptionsProps>`
   gap: 8px;
   background-color: var(--background-primary);
   border: 6px solid (--text-secondary);
-
   transform: translateX(50%);
+
+  & li a{
+    display: block;
+    width: 100%;
+  }
 `;
 
 export const AccountManagerButton = styled.div`

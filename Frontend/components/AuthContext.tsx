@@ -7,7 +7,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   login: (data: any) => Promise<void>;
   logout: () => Promise<void>;
-  authFetch: (url: string, method: string, body: string | FormData) => Promise<Response>;
+  authFetch: (url: string, method: string, body: string | FormData) => Promise<any>;
   user: any;
   CsrfToken: string | null;
   RefreshToken: string | null;
