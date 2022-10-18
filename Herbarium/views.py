@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 from rest_framework.decorators import *
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from herbarium.serializers import *
-from herbarium.forms import *
+from Herbarium.serializers import *
+from Herbarium.forms import *
 
 # Create your views here.
 

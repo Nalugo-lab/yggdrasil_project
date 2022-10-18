@@ -1,7 +1,7 @@
 from django.urls import path, include
 from . import views
 from rest_framework import routers
-app_name = 'herbarium'
+app_name = 'Herbarium'
 
 
 router = routers.DefaultRouter()
@@ -15,7 +15,6 @@ router.register('soils', views.Soil_ViewSet)
 router.register('plants', views.Plant_ViewSet)
 
 
-
 urlpatterns = [
     path('', include(router.urls)),
 
@@ -23,5 +22,3 @@ urlpatterns = [
     path('scientific/<group>/<family>', views.Genus_List.as_view(), name='get_genera'),
     path('scientific/<group>/<family>/<genus>', views.Species_List.as_view(), name='get_species'),
 ]
-
-    # path('plants', views.PlantView.as_view(), name='plantView'),

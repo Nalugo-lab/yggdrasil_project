@@ -19,12 +19,14 @@ env = environ.Env(
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # ENV Variables
+
 SECRET_KEY = env('SECRET_KEY')
 DB_NAME = env('DB_NAME')
 DB_USER = env('DB_USER')
@@ -34,21 +36,24 @@ DEBUG = env('DEBUG')
 
 
 # CORS Configs
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000', 'http://127.0.0.1:3000'
 ]
 
 CORS_ALLOW_CREDENTIALS: True
-# SESSION_COOKIE_SAMESITE: None
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000']
 
 
 # Application definition
+
 INSTALLED_APPS = [
-    'herbarium.apps.HerbariumConfig',
+    # APPS
+    'Herbarium.apps.HerbariumConfig',
     'accounts.apps.AccountsConfig',
 
+    # Third-party APPS
     'django_browser_reload',
     'rest_framework',
     'corsheaders',
@@ -77,6 +82,7 @@ MIDDLEWARE = [
 ]
 
 # Authentication backends
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -114,17 +120,13 @@ SIMPLE_JWT = {
 }
 
 # Django rest framework
+
 REST_FRAMEWORK = {
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE': 5,
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.AllowAny',
 
     ),
-    # 'DEFAULT_RENDERER_CLASSES': (
-    #     'rest_framework.renderers.JSONRenderer',
-    # ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.MultiPartParser',
@@ -138,7 +140,11 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
 }
 
+# Base URL path
+
 ROOT_URLCONF = 'YggdrasilProject.urls'
+
+# Django Templates => Used only by Rest Framework
 
 TEMPLATES = [
     {
@@ -156,10 +162,11 @@ TEMPLATES = [
     },
 ]
 
+# WSGI
+
 WSGI_APPLICATION = 'YggdrasilProject.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -174,7 +181,6 @@ DATABASES = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -193,7 +199,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -211,19 +216,15 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'herbarium/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'Herbarium/media')
 
 AUTH_USER_MODEL = 'accounts.User'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# NPM_BIN_PATH = r"/usr/local/bin/npm"

@@ -3,13 +3,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
-from django.shortcuts import redirect
-
-from django.contrib.auth import authenticate, login, logout
-
-from .models import User
-
-# Create your views here.
 
 
 class Register(APIView):
