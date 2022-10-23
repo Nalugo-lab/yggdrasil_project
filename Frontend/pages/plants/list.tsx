@@ -3,16 +3,15 @@ import Link from "next/link";
 import { NextRequest } from "next/server";
 import {
   Container,
-  ExtraInfo,
   IconPlusName,
   ImageCard,
   Info,
-  Owner,
   PlantCard,
   PopularName,
   ScientificName,
   Title,
-} from "../../components/styled/styled-plants";
+  Icons_wrapper,
+} from "../../components/styled/styled-plants-list";
 
 interface Data {
   id: number;
@@ -51,6 +50,7 @@ interface Data {
   custom_name: string | null;
   complementary_name: string | null;
   last_watered: string | null;
+  last_fertilized: string | null;
 }
 
 export async function getServerSideProps({ req }: any) {
@@ -75,40 +75,40 @@ const Home: NextPage = ({ plants }: any) => {
   return (
     <Container>
       {plants.map((e: Data, index: number) => (
-        <Link href={`/plants/plant/${e.id}`} key={index}>
-          <a>
-            <PlantCard>
+        <PlantCard key={index}>
+          <Link href={`/plants/plant/${e.id}`}>
+            <a>
               <Info>
                 <Title>
-                  <ScientificName>{`Genus and species: ${e.species.genus.name} ${e.species.name}`}</ScientificName>{" "}
-                  <ExtraInfo>
-                    {"complementary name:" + e.complementary_name}
-                  </ExtraInfo>
+                  <ScientificName>{`${e.species.genus.name} ${e.species.name} ${
+                    e.complementary_name ? e.complementary_name : ""
+                  }`}</ScientificName>
+                  <PopularName>{e.popular_name}</PopularName>
                 </Title>
-                <PopularName>{"popular name:" + e.popular_name}</PopularName>
-                <IconPlusName>
-                  <p>{"soil name:" + e.soil.name}</p>
-                  <img />
-                </IconPlusName>
-                <IconPlusName>
-                  <p>{"sun_preference name:" + e.sun_preference.name}</p>
-                  <img />
-                </IconPlusName>
-                <IconPlusName>
-                  <p>{"last watered:" + e.last_watered}</p>
-                  <img />
-                </IconPlusName>
-                <p>{"family name:" + e.species.genus.family.name}</p>
-                <p>{"group name:" + e.species.genus.family.group.name}</p>
-                <Owner>
-                  <p>{"owner username:" + e.owner.username}</p>
-                  <img />
-                </Owner>
+
+                <Icons_wrapper>
+                  <IconPlusName>
+                    <img src="/icons/tree.svg" />
+                    <p>{e.soil.name}</p>
+                  </IconPlusName>
+                  <IconPlusName>
+                    <img src="/icons/sun.svg" />
+                    <p>{e.sun_preference.name}</p>
+                  </IconPlusName>
+                  <IconPlusName>
+                    <img src="/icons/drop.svg" />
+                    <p>{e.last_watered ? e.last_watered : "N/A date"}</p>
+                  </IconPlusName>
+                  <IconPlusName>
+                    <img src="/icons/leaf.svg" />
+                    <p>{e.last_fertilized ? e.last_fertilized : "N/A date"}</p>
+                  </IconPlusName>
+                </Icons_wrapper>
               </Info>
               <ImageCard src={"http://localhost:8000" + e.banner}></ImageCard>
-            </PlantCard>
-          </a>
-        </Link>
+            </a>
+          </Link>
+        </PlantCard>
       ))}
     </Container>
   );

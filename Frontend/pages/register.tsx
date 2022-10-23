@@ -1,8 +1,8 @@
-import { CallTracker } from "assert";
 import type { NextPage } from "next";
 import Router from "next/router";
-import { SyntheticEvent, useEffect, useState } from "react";
-import { Container } from "../components/styled/styled-index";
+import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import { Basic_input, Filled_button_button, Input_wrapper } from "../components/styled/essential";
+import { Container } from "../components/styled/styled-register";
 
 // export async function getStaticProps() {
 //   //   const res = await fetch(`http://localhost:3000/django/login/`);
@@ -16,18 +16,18 @@ const Home: NextPage = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [ConfirmPassword, setConfirmPassword] = useState("");
+  const [confirm_password, set_confirm_password] = useState("");
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
 
-    if (password != ConfirmPassword) return;
+    if (password != confirm_password) return;
 
     const response = await fetch("http://localhost:8000/auth/register", {
       method: "POST",
       headers: {
-        'Accept': 'application/json',
-      'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ name, email, username, password }),
     });
@@ -40,37 +40,52 @@ const Home: NextPage = () => {
   return (
     <Container>
       <form method="POST" onSubmit={handleSubmit}>
-        <label htmlFor="name">name</label>
-        <input
+        <Basic_input
+          label="name"
+          id="name"
+          value={name}
           type="text"
           name="name"
-          onChange={(e) => setName(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
         />
-        <label>email</label>
-        <input
+
+        <Basic_input
+          label="email"
+          id="email"
+          value={email}
           type="text"
           name="email"
-          onChange={(e) => setEmail(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
         />
-        <label>username</label>
-        <input
+
+        <Basic_input
+          label="username"
+          id="username"
+          value={username}
           type="text"
           name="username"
-          onChange={(e) => setUsername(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
         />
-        <label>password</label>
-        <input
-          type="text"
+
+        <Basic_input
+          label="password"
+          id="password"
+          value={password}
+          type="password"
           name="password"
-          onChange={(e) => setPassword(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
         />
-        <label>Confirm password</label>
-        <input
-          type="text"
+
+        <Basic_input
+          label="Confirm password"
+          id="confirm_password"
+          value={confirm_password}
+          type="password"
           name="confirm_password"
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) => set_confirm_password(e.target.value)}
         />
-        <button>ENVIAR</button>
+
+        <Filled_button_button>ENVIAR</Filled_button_button>
       </form>
     </Container>
   );

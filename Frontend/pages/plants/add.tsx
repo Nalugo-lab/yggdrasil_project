@@ -1,8 +1,16 @@
 import type { NextPage } from "next";
-import { SyntheticEvent, useEffect, useState, useContext } from "react";
-import { Container } from "../../components/styled/styled-index";
+import {
+  SyntheticEvent,
+  useEffect,
+  useState,
+  useContext,
+  ChangeEvent,
+} from "react";
+import { Container } from "../../components/styled/styled-plants-add";
 import { AuthContext } from "../../components/AuthContext";
 import Router from "next/router";
+import { Basic_input } from "../../components/styled/essential";
+import { Select } from "../../components/styled/essential";
 
 export async function getStaticProps() {
   const groupsRes = await fetch(`http://localhost:8000/groups/`);
@@ -20,51 +28,8 @@ export async function getStaticProps() {
   return { props: { groups, sun_preferences, soils } };
 }
 
-type SelectType = {
-  name: string;
-  id: string;
-  data: any;
-  value: string | undefined;
-  keyIndex: string | number;
-  valueIndex: string | number;
-  handleChange: any;
-};
-
-function Select({
-  name,
-  id,
-  data,
-  value,
-  keyIndex,
-  valueIndex,
-  handleChange,
-}: SelectType) {
-  return (
-    <select
-      name={name}
-      id={id}
-      value={String(value)}
-      onChange={(e) => handleChange(e.target.value)}
-    >
-      <option disabled value={"undefined"}>
-        -- select an option --
-      </option>
-      {data &&
-        data.map((option: any) => (
-          <option
-            key={`${option[valueIndex]}-${option[keyIndex]}`}
-            value={option[keyIndex]}
-          >
-            {option[valueIndex]}
-          </option>
-        ))}
-    </select>
-  );
-}
-
 const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
-  const { isAuthenticated, AccessToken, authFetch } =
-    useContext(AuthContext);
+  const { isAuthenticated, AccessToken, authFetch } = useContext(AuthContext);
 
   const [popular_name, setPopular_name] = useState("");
   const [custom_name, setCustom_name] = useState("");
@@ -103,7 +68,11 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     data.append("sun_preference", sun_preference);
     data.append("species", species);
 
-    const response = await authFetch("http://localhost:8000/plants/", "POST", data);
+    const response = await authFetch(
+      "http://localhost:8000/plants/",
+      "POST",
+      data
+    );
 
     if (response.ok) {
       Router.push("/");
@@ -144,9 +113,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (family && group) {
       (async () => {
         setGenusData(
-          await getFetch(
-            `http://localhost:8000/scientific/${group}/${family}`
-          )
+          await getFetch(`http://localhost:8000/scientific/${group}/${family}`)
         );
         setGenus(undefined);
       })();
@@ -168,110 +135,125 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
   return (
     <Container>
       <form method="POST" onSubmit={submitForm}>
-        <label htmlFor="group">Group</label>
-        <Select
-          name="group"
-          id="group"
-          data={groups}
-          value={group}
-          keyIndex="id"
-          valueIndex="name"
-          handleChange={setGroup}
-        ></Select>
-
-        <label htmlFor="group">Family</label>
-        <Select
-          name="family"
-          id="family"
-          data={familyData}
-          value={family}
-          keyIndex="id"
-          valueIndex="name"
-          handleChange={setFamily}
-        ></Select>
-
-        <label htmlFor="genus">Genus</label>
-        <Select
-          name="genus"
-          id="genus"
-          data={genusData}
-          value={genus}
-          keyIndex="id"
-          valueIndex="name"
-          handleChange={setGenus}
-        ></Select>
-
-        <label htmlFor="genus">Species</label>
-        <Select
-          name="species"
-          id="species"
-          data={speciesData}
-          value={species}
-          keyIndex="id"
-          valueIndex="name"
-          handleChange={setSpecies}
-        ></Select>
-
-        <label htmlFor="soil">Soil preference</label>
-        <Select
-          name="soil"
-          id="soil"
-          data={soils}
-          value={soil}
-          keyIndex="id"
-          valueIndex="name"
-          handleChange={setSoil}
-        ></Select>
-
-        <label htmlFor="sun_preference">Sun preference</label>
-        <Select
-          name="sun_preference"
-          id="sun_preference"
-          data={sun_preferences}
-          value={sun_preference}
-          keyIndex="id"
-          valueIndex="name"
-          handleChange={setSun_preference}
-        ></Select>
-
-        <label htmlFor="popular_name">Popular name</label>
-        <input
+        <div>
+          <label htmlFor="group">Group</label>
+          <Select
+            name="group"
+            id="group"
+            data={groups}
+            value={group}
+            keyIndex="id"
+            valueIndex="name"
+            handleChange={setGroup}
+          ></Select>
+        </div>
+        <div>
+          <label htmlFor="group">Family</label>
+          <Select
+            name="family"
+            id="family"
+            data={familyData}
+            value={family}
+            keyIndex="id"
+            valueIndex="name"
+            handleChange={setFamily}
+          ></Select>
+        </div>
+        <div>
+          <label htmlFor="genus">Genus</label>
+          <Select
+            name="genus"
+            id="genus"
+            data={genusData}
+            value={genus}
+            keyIndex="id"
+            valueIndex="name"
+            handleChange={setGenus}
+          ></Select>
+        </div>
+        <div>
+          <label htmlFor="genus">Species</label>
+          <Select
+            name="species"
+            id="species"
+            data={speciesData}
+            value={species}
+            keyIndex="id"
+            valueIndex="name"
+            handleChange={setSpecies}
+          ></Select>
+        </div>
+        <div>
+          <label htmlFor="soil">Soil preference</label>
+          <Select
+            name="soil"
+            id="soil"
+            data={soils}
+            value={soil}
+            keyIndex="id"
+            valueIndex="name"
+            handleChange={setSoil}
+          ></Select>
+        </div>
+        <div>
+          <label htmlFor="sun_preference">Sun preference</label>
+          <Select
+            name="sun_preference"
+            id="sun_preference"
+            data={sun_preferences}
+            value={sun_preference}
+            keyIndex="id"
+            valueIndex="name"
+            handleChange={setSun_preference}
+          ></Select>
+        </div>
+        <Basic_input
           type="text"
           id="popular_name"
           name="popular_name"
           value={popular_name}
-          onChange={(e) => setPopular_name(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setPopular_name(e.target.value)
+          }
+          label="Popular name"
         />
 
-        <label htmlFor="custom_name">Custom name</label>
-        <input
+        <Basic_input
           type="text"
           id="custom_name"
           name="custom_name"
           value={custom_name}
-          onChange={(e) => setCustom_name(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setCustom_name(e.target.value)
+          }
+          label="Custom name"
         />
 
-        <label htmlFor="complementary_name">Complementary name</label>
-        <input
+        <Basic_input
           type="text"
-          id="custom_name"
-          name="custom_name"
+          id="complementary_name"
+          name="complementary_name"
           value={complementary_name}
-          onChange={(e) => setComplementary_name(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setComplementary_name(e.target.value)
+          }
+          label="Complementary name"
         />
 
-        <label htmlFor="photo">Plant photo</label>
-        <input
-          type="file"
-          accept="image/*"
-          id="photo"
-          name="photo"
-          onChange={(e) => {
-            const [file]: any = e.target.files;
-            if (file) setPhotoFile(file);
-          }}
-        />
+        <div>
+          <label htmlFor="photo">Plant photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            id="photo"
+            name="photo"
+            onChange={(e) => {
+              const [file]: any = e.target.files;
+              if (file) setPhotoFile(file);
+            }}
+          />
+        </div>
+
         <img
           id="blah"
           src={photoFile ? URL.createObjectURL(photoFile) : ""}

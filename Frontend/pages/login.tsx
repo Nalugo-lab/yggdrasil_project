@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
-import { SyntheticEvent, useContext, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useContext, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
-import { Container } from "../components/styled/styled-index";
+import { Basic_input, Filled_button_button } from "../components/styled/essential";
+import { Container } from "../components/styled/styled-login";
 
 const Home: NextPage = () => {
   const [username, setUsername] = useState("");
@@ -19,21 +20,25 @@ const Home: NextPage = () => {
   return (
     <Container>
       <form method="POST" onSubmit={submitForm}>
-        <label>username</label>
-        <input
+        <Basic_input           
           type="text"
+          id="id"
+          label="username"
           name="username"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <label>password</label>
-        <input
-          type="text"
+          handleChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+          />
+        
+        <Basic_input           
+          type="password"
+          id="id"
+          label="password"
           name="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button>ENVIAR</button>
+          handleChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+          />
+
+        <Filled_button_button>Log in</Filled_button_button>
       </form>
     </Container>
   );

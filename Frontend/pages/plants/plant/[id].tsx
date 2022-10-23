@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { Container } from "../../../components/styled/styled-plants";
+import { Container } from "../../../components/styled/styled-plants-list";
 
 interface Data {
     owner: {

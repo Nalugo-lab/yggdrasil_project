@@ -1,19 +1,35 @@
 import styled from "styled-components";
 
 export const Container = styled.main`
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-rows: repeat(3);
   padding: 16px;
-  font-size: var(--font-size-xl);
   background-color: var(--background-secondary);
   column-gap: 48px;
-  & input, select {
-    display: block;
+`;
+
+export const Features = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 250px;
+`;
+
+export const Feature = styled.div`
+  &:nth-child(1),&:nth-child(2), &:nth-child(3){
+    border-right: 2px solid var(--text);
   }
-  & button {
-    border: 3px solid var(--primary);
-    margin: 8px 0;
-    padding: 3px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  & a{
+    margin-top: auto;
   }
 `;
+
+export const Title_wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
