@@ -6,11 +6,21 @@ import {
   useContext,
   ChangeEvent,
 } from "react";
-import { Container } from "../../components/styled/styled-plants-add";
+import {
+  Card,
+  Container,
+  Complementary_name,
+  Genus,
+  Name,
+  PopularName,
+  ScientificName,
+  Species,
+  Title,
+  Errors,
+} from "../../components/styled/styled-plants-add";
 import { AuthContext } from "../../components/AuthContext";
 import Router from "next/router";
-import { Basic_input } from "../../components/styled/essential";
-import { Select } from "../../components/styled/essential";
+import { Select, Basic_input } from "../../components/essential";
 
 export async function getStaticProps() {
   const groupsRes = await fetch(`http://localhost:8000/groups/`);
@@ -31,17 +41,19 @@ export async function getStaticProps() {
 const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
   const { isAuthenticated, AccessToken, authFetch } = useContext(AuthContext);
 
+  const [errors, set_errors] = useState<any>(undefined);
+
   const [popular_name, setPopular_name] = useState("");
   const [custom_name, setCustom_name] = useState("");
   const [complementary_name, setComplementary_name] = useState("");
 
-  const [soil, setSoil] = useState(undefined);
-  const [sun_preference, setSun_preference] = useState(undefined);
+  const [soil, setSoil] = useState<any>(undefined);
+  const [sun_preference, setSun_preference] = useState<any>(undefined);
 
-  const [species, setSpecies] = useState(undefined);
-  const [genus, setGenus] = useState(undefined);
-  const [family, setFamily] = useState(undefined);
-  const [group, setGroup] = useState(undefined);
+  const [species, setSpecies] = useState<any>(undefined);
+  const [genus, setGenus] = useState<any>(undefined);
+  const [family, setFamily] = useState<any>(undefined);
+  const [group, setGroup] = useState<any>(undefined);
 
   const [speciesData, setSpeciesData] = useState();
   const [genusData, setGenusData] = useState();
@@ -56,17 +68,18 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
       console.log("tá querendo me enganar fdp?");
       return;
     }
+
     if (!photoFile || !species || !soil || !sun_preference) return;
 
     const data = new FormData();
-    data.append("image", photoFile);
+    data.append("image", photoFile ? photoFile : "");
 
-    data.append("popular_name", popular_name);
-    data.append("custom_name", custom_name);
-    data.append("complementary_name", complementary_name);
-    data.append("soil", soil);
-    data.append("sun_preference", sun_preference);
-    data.append("species", species);
+    data.append("popular_name", popular_name ? popular_name : "");
+    data.append("custom_name", custom_name ? photoFile : "");
+    data.append("complementary_name", complementary_name ? complementary_name : "");
+    data.append("soil", soil.key ? soil.key : "");
+    data.append("sun_preference", sun_preference.key ? sun_preference.key : "");
+    data.append("species", species.key ? species.key : "");
 
     const response = await authFetch(
       "http://localhost:8000/plants/",
@@ -79,10 +92,9 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
       return;
     }
 
-    console.log(response);
     try {
       const data = await response.json();
-      console.log(data);
+      set_errors(JSON.parse(data));
     } catch {}
   }
 
@@ -102,7 +114,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (group) {
       (async () => {
         setFamilyData(
-          await getFetch(`http://localhost:8000/scientific/${group}`)
+          await getFetch(`http://localhost:8000/scientific/${group.key}`)
         );
         setFamily(undefined);
       })();
@@ -113,7 +125,9 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (family && group) {
       (async () => {
         setGenusData(
-          await getFetch(`http://localhost:8000/scientific/${group}/${family}`)
+          await getFetch(
+            `http://localhost:8000/scientific/${group.key}/${family.key}`
+          )
         );
         setGenus(undefined);
       })();
@@ -124,7 +138,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     if (genus && family && group) {
       (async () => {
         const data = await getFetch(
-          `http://localhost:8000/scientific/${group}/${family}/${genus}`
+          `http://localhost:8000/scientific/${group.key}/${family.key}/${genus.key}`
         );
         setSpeciesData(data);
         setSpecies(undefined);
@@ -134,111 +148,139 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
 
   return (
     <Container>
+      <Errors>
+        {errors &&
+          Object.keys(errors).map((e) => {
+            return (
+              <p>
+                {e} - {errors[e][0].message}
+              </p>
+            );
+          })}
+      </Errors>
+
       <form method="POST" onSubmit={submitForm}>
-        <div>
-          <label htmlFor="group">Group</label>
-          <Select
-            name="group"
-            id="group"
-            data={groups}
-            value={group}
-            keyIndex="id"
-            valueIndex="name"
-            handleChange={setGroup}
-          ></Select>
-        </div>
-        <div>
-          <label htmlFor="group">Family</label>
-          <Select
-            name="family"
-            id="family"
-            data={familyData}
-            value={family}
-            keyIndex="id"
-            valueIndex="name"
-            handleChange={setFamily}
-          ></Select>
-        </div>
-        <div>
-          <label htmlFor="genus">Genus</label>
-          <Select
-            name="genus"
-            id="genus"
-            data={genusData}
-            value={genus}
-            keyIndex="id"
-            valueIndex="name"
-            handleChange={setGenus}
-          ></Select>
-        </div>
-        <div>
-          <label htmlFor="genus">Species</label>
-          <Select
-            name="species"
-            id="species"
-            data={speciesData}
-            value={species}
-            keyIndex="id"
-            valueIndex="name"
-            handleChange={setSpecies}
-          ></Select>
-        </div>
-        <div>
-          <label htmlFor="soil">Soil preference</label>
-          <Select
-            name="soil"
-            id="soil"
-            data={soils}
-            value={soil}
-            keyIndex="id"
-            valueIndex="name"
-            handleChange={setSoil}
-          ></Select>
-        </div>
-        <div>
-          <label htmlFor="sun_preference">Sun preference</label>
-          <Select
-            name="sun_preference"
-            id="sun_preference"
-            data={sun_preferences}
-            value={sun_preference}
-            keyIndex="id"
-            valueIndex="name"
-            handleChange={setSun_preference}
-          ></Select>
-        </div>
-        <Basic_input
-          type="text"
-          id="popular_name"
-          name="popular_name"
-          value={popular_name}
-          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setPopular_name(e.target.value)
-          }
-          label="Popular name"
-        />
+        <section>
+          <div>
+            <label htmlFor="group">Group</label>
+            <Select
+              name="group"
+              id="group"
+              data={groups}
+              value={group}
+              keyIndex="id"
+              valueIndex="name"
+              handleChange={setGroup}
+              tabIndex={0}
+            ></Select>
+          </div>
+          <div>
+            <label htmlFor="group">Family</label>
+            <Select
+              name="family"
+              id="family"
+              data={familyData}
+              value={family}
+              keyIndex="id"
+              valueIndex="name"
+              handleChange={setFamily}
+              tabIndex={0}
+            ></Select>
+          </div>
+          <div>
+            <label htmlFor="genus">Genus</label>
+            <Select
+              name="genus"
+              id="genus"
+              data={genusData}
+              value={genus}
+              keyIndex="id"
+              valueIndex="name"
+              handleChange={setGenus}
+              tabIndex={0}
+            ></Select>
+          </div>
+          <div>
+            <label htmlFor="genus">Species</label>
+            <Select
+              name="species"
+              id="species"
+              data={speciesData}
+              value={species}
+              keyIndex="id"
+              valueIndex="name"
+              handleChange={setSpecies}
+              tabIndex={0}
+            ></Select>
+          </div>
+        </section>
 
-        <Basic_input
-          type="text"
-          id="custom_name"
-          name="custom_name"
-          value={custom_name}
-          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setCustom_name(e.target.value)
-          }
-          label="Custom name"
-        />
+        <section>
+          <div>
+            <label htmlFor="soil">Soil preference</label>
+            <Select
+              name="soil"
+              id="soil"
+              data={soils}
+              value={soil}
+              keyIndex="id"
+              valueIndex="name"
+              handleChange={setSoil}
+              tabIndex={0}
+            ></Select>
+          </div>
+          <div>
+            <label htmlFor="sun_preference">Sun preference</label>
+            <Select
+              name="sun_preference"
+              id="sun_preference"
+              data={sun_preferences}
+              value={sun_preference}
+              keyIndex="id"
+              valueIndex="name"
+              handleChange={setSun_preference}
+              tabIndex={0}
+            ></Select>
+          </div>
+        </section>
 
-        <Basic_input
-          type="text"
-          id="complementary_name"
-          name="complementary_name"
-          value={complementary_name}
-          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setComplementary_name(e.target.value)
-          }
-          label="Complementary name"
-        />
+        <section>
+          <Basic_input
+            type="text"
+            id="popular_name"
+            name="popular_name"
+            value={popular_name}
+            handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPopular_name(e.target.value)
+            }
+            label="Popular name"
+            tabIndex={0}
+          />
+
+          <Basic_input
+            type="text"
+            id="custom_name"
+            name="custom_name"
+            value={custom_name}
+            handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setCustom_name(e.target.value)
+            }
+            label="Custom name"
+            tabIndex={0}
+          />
+
+          <Basic_input
+            type="text"
+            id="complementary_name"
+            name="complementary_name"
+            value={complementary_name}
+            handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setComplementary_name(e.target.value)
+            }
+            label="Complementary name"
+            tabIndex={0}
+          />
+        </section>
 
         <div>
           <label htmlFor="photo">Plant photo</label>
@@ -251,17 +293,31 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
               const [file]: any = e.target.files;
               if (file) setPhotoFile(file);
             }}
+            tabIndex={0}
           />
         </div>
+
+        <button tabIndex={0}>ENVIAR</button>
+      </form>
+
+      <Card>
+        <Name>
+          <Title>
+            <ScientificName>
+              <Genus>{genus && genus.value}</Genus>
+              <Species>{species && species.value}</Species>
+            </ScientificName>
+            <Complementary_name>{complementary_name}</Complementary_name>
+          </Title>
+          <PopularName>{popular_name}</PopularName>
+        </Name>
 
         <img
           id="blah"
           src={photoFile ? URL.createObjectURL(photoFile) : ""}
           alt="your image"
         />
-
-        <button>ENVIAR</button>
-      </form>
+      </Card>
     </Container>
   );
 };

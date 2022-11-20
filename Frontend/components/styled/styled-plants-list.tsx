@@ -67,7 +67,7 @@ export const Icons_wrapper = styled.div`
 
 export const PlantCard = styled.div`
   & a {
-    border: 5px solid var(--primary);
+    border: 3px solid var(--primary);
     display: flex;
     font-size: 1rem;
     border-radius: 5px;

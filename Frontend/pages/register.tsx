@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Router from "next/router";
 import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
-import { Basic_input, Filled_button_button, Input_wrapper } from "../components/styled/essential";
+import { Basic_input, Filled_button_button, Input_wrapper } from "../components/essential";
 import { Container } from "../components/styled/styled-register";
 
 // export async function getStaticProps() {

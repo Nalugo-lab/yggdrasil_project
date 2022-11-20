@@ -13,7 +13,7 @@ export const Theme = {
         primary: "#141414",
         secondary: "#0E141B",
       },
-      info: "hsl(230deg, 100%, 69%)",
+      info: "hsl(2s30deg, 100%, 69%)",
       success: "hsl(160deg, 100%, 40%)",
       error: "hsl(340deg, 95%, 60%)",
       alert: "hsl(30deg, 100%, 50%)",
@@ -22,16 +22,16 @@ export const Theme = {
   light: {
     name: "light",
     colors: {
-      primary: "#E59967",
-      secondary: "#ffd9b3",
+      primary: "#627038",
+      secondary: "#233721",
       tertiary: "rgb(15, 73, 197)",
       text: {
         primary: "#000",
         secondary: "#fff",
       },
       background: {
-        primary: "#008978",
-        secondary: "#ECF0F1",
+        primary: "#F6F8E4",
+        secondary: "#DDDFCD",
       },
       info: "hsl(230deg, 100%, 69%)",
       success: "hsl(160deg, 100%, 40%)",

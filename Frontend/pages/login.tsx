@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { ChangeEvent, SyntheticEvent, useContext, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
-import { Basic_input, Filled_button_button } from "../components/styled/essential";
+import { Basic_input, Filled_button_button } from "../components/essential";
 import { Container } from "../components/styled/styled-login";
 
 const Home: NextPage = () => {

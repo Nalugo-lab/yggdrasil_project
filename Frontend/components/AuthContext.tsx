@@ -1,13 +1,17 @@
 import { createContext, useEffect, useState } from "react";
 import Router from "next/router";
 import jwt_decode from "jwt-decode";
-import { setCookie } from "cookies-next";
+import { deleteCookie, setCookie } from "cookies-next";
 
 type AuthContextType = {
   isAuthenticated: boolean;
   login: (data: any) => Promise<void>;
   logout: () => Promise<void>;
-  authFetch: (url: string, method: string, body: string | FormData) => Promise<any>;
+  authFetch: (
+    url: string,
+    method: string,
+    body: string | FormData
+  ) => Promise<any>;
   user: any;
   CsrfToken: string | null;
   RefreshToken: string | null;
@@ -72,13 +76,13 @@ export function AuthProvider({ children }: any) {
   useEffect(() => {
     if (!RefreshToken) return;
     localStorage.setItem("RefreshToken", RefreshToken);
-    setCookie("RefreshToken", RefreshToken)
+    setCookie("RefreshToken", RefreshToken);
   }, [RefreshToken]);
 
   useEffect(() => {
     if (!AccessToken) return;
     localStorage.setItem("AccessToken", AccessToken);
-    setCookie("AccessToken", AccessToken)
+    setCookie("AccessToken", AccessToken);
     fetchUser();
   }, [AccessToken]);
 
@@ -119,11 +123,17 @@ export function AuthProvider({ children }: any) {
     setCsrfToken(getCookie("csrftoken"));
     setRefreshToken(null);
     setAccessToken(null);
+    deleteCookie("RefreshToken");
+    deleteCookie("AccessToken");
 
     Router.push("/login");
   }
 
-  async function authFetch(url: string, method: string, body: string | FormData) {
+  async function authFetch(
+    url: string,
+    method: string,
+    body: string | FormData
+  ) {
     if (!isAuthenticated) return;
 
     const headers = new Headers({

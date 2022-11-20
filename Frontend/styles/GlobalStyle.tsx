@@ -48,6 +48,8 @@ body {
     --font-size-3xl: 2rem;      // 32
     --font-size-4xl: 2.652rem;  // 42
     --font-size-5xl: 4rem;      // 64
+
+    --gray: #808080;
 }
 
 body {

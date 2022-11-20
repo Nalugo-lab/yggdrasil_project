@@ -13,6 +13,7 @@ import {
   AccountManagerButton,
   AccountManagerOptions,
   IconWrapper,
+  Header_wrapper
 } from "../styled/styled-template";
 
 import { useContext, useEffect, useState } from "react";
@@ -82,63 +83,63 @@ const Template = ({
 
   return (
     <>
-      <Header>
-        <Link href="/">
-          <a>
-            <LogoWrapper>
-              <img src="/icons/favicon.png" />
-              <span>YggdrasilProject</span>
-            </LogoWrapper>
-          </a>
-        </Link>
+      <Header_wrapper>
+        <Header>
+          <Link href="/">
+            <a>
+              <LogoWrapper>
+                <img src="/icons/favicon.png" />
+                <span>YggdrasilProject</span>
+              </LogoWrapper>
+            </a>
+          </Link>
 
-        <Navbar>
+          <Navbar>
+            <IconWrapper>
+              <Link href="/browse">
+                <a>
+                  <img src="/icons/search.svg" />
+                </a>
+              </Link>
+            </IconWrapper>
 
-        <IconWrapper>
-            <Link href="/browse">
-              <a>
-                <img src="/icons/search.svg" />
-              </a>
-            </Link>
-          </IconWrapper>
+            <IconWrapper>
+              <Link href="/plants/add">
+                <a>
+                  <img src="/icons/add.svg" />
+                </a>
+              </Link>
+            </IconWrapper>
 
-          <IconWrapper>
-            <Link href="/plants/add">
-              <a>
-                <img src="/icons/add.svg" />
-              </a>
-            </Link>
-          </IconWrapper>
+            <ThemeSwitcherWrapper>
+              <ThemeSwitcher onClick={toggleDarkMode}>
+                <img
+                  src={
+                    currentTheme == "dark"
+                      ? "/icons/night.svg"
+                      : "/icons/flower.svg"
+                  }
+                />
+              </ThemeSwitcher>
+            </ThemeSwitcherWrapper>
 
-          <ThemeSwitcherWrapper>
-            <ThemeSwitcher onClick={toggleDarkMode}>
-              <img
-                src={
-                  currentTheme == "dark"
-                    ? "/icons/night.svg"
-                    : "/icons/flower.svg"
-                }
-              />
-            </ThemeSwitcher>
-          </ThemeSwitcherWrapper>
+            <AccountManager>
+              <AccountManagerButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(!isOpen);
+                }}
+              >
+                <img src={"/icons/account.svg"} />
+              </AccountManagerButton>
 
-          <AccountManager>
-            <AccountManagerButton
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(!isOpen);
-              }}
-            >
-              <img src={"/icons/account.svg"} />
-            </AccountManagerButton>
-
-            <AccountManagerOptions isOpen={isOpen}>
-              {Account_Options}
-            </AccountManagerOptions>
-          </AccountManager>
-        </Navbar>
-      </Header>
-
+              <AccountManagerOptions isOpen={isOpen}>
+                {Account_Options}
+              </AccountManagerOptions>
+            </AccountManager>
+          </Navbar>
+        </Header>
+      </Header_wrapper>
       {children}
       <Footer>
         <Ps>

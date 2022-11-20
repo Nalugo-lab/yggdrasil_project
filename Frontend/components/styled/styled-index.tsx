@@ -15,7 +15,9 @@ export const Features = styled.div`
 `;
 
 export const Feature = styled.div`
-  &:nth-child(1),&:nth-child(2), &:nth-child(3){
+  &:nth-child(1),
+  &:nth-child(2),
+  &:nth-child(3) {
     border-right: 2px solid var(--text);
   }
   padding: 8px;
@@ -23,13 +25,34 @@ export const Feature = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  & a{
+  & a {
     margin-top: auto;
   }
 `;
 
-export const Title_wrapper = styled.div`
+export const Hero_wrapper = styled.div`
+  max-width: 1300px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 96px;
+  align-items: center;
+`;
+
+export const Hero = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+  padding: 48px 52px;
+`;
+
+export const Hero_main = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+
+  h1 {
+    font-size: var(--font-size-4xl);
+  }
+`;
+
+export const Hero_buttons = styled.div``;

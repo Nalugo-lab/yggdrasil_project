@@ -48,7 +48,11 @@ export const ThemeSwitcherWrapper = styled.div`
   filter: var(--inverse-inverse);
 `;
 
-export const Header = styled.header`
+export const Header_wrapper = styled.header`
+  background-color: var(--primary);
+`
+
+export const Header = styled.section`
   display: flex;
   color: var(--text-secondary);
   width: 100%;
