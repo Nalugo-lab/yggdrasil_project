@@ -24,7 +24,7 @@ interface Data {
     name: string;
     description: string;
   };
-  sun_preference: {
+  sun_regime: {
     name: string;
     description: string;
   };
@@ -76,7 +76,7 @@ const Home: NextPage = ({ plants }: any) => {
     <Container>
       {plants.map((e: Data, index: number) => (
         <PlantCard key={index}>
-          <Link href={`/plants/plant/${e.id}`}>
+          <Link href={`/plant/${e.id}`}>
             <a>
               <Info>
                 <Title>
@@ -93,7 +93,7 @@ const Home: NextPage = ({ plants }: any) => {
                   </IconPlusName>
                   <IconPlusName>
                     <img src="/icons/sun.svg" />
-                    <p>{e.sun_preference.name}</p>
+                    <p>{e.sun_regime.name}</p>
                   </IconPlusName>
                   <IconPlusName>
                     <img src="/icons/drop.svg" />

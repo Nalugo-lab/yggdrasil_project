@@ -20,25 +20,25 @@ import {
 } from "../../components/styled/styled-plants-add";
 import { AuthContext } from "../../components/AuthContext";
 import Router from "next/router";
-import { Select, Basic_input } from "../../components/essential";
+import { Select, Basic_input, Filled_button_button } from "../../components/essential";
 
 export async function getStaticProps() {
   const groupsRes = await fetch(`http://localhost:8000/groups/`);
 
-  const sun_preferencesRes = await fetch(
-    `http://localhost:8000/sun_preferences/`
+  const sun_regimesRes = await fetch(
+    `http://localhost:8000/sun_regimes/`
   );
 
   const soilsRes = await fetch(`http://localhost:8000/soils/`);
 
   const groups = await groupsRes.json();
-  const sun_preferences = await sun_preferencesRes.json();
+  const sun_regimes = await sun_regimesRes.json();
   const soils = await soilsRes.json();
 
-  return { props: { groups, sun_preferences, soils } };
+  return { props: { groups, sun_regimes, soils } };
 }
 
-const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
+const Add: NextPage = ({ groups, sun_regimes, soils }: any) => {
   const { isAuthenticated, AccessToken, authFetch } = useContext(AuthContext);
 
   const [errors, set_errors] = useState<any>(undefined);
@@ -48,7 +48,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
   const [complementary_name, setComplementary_name] = useState("");
 
   const [soil, setSoil] = useState<any>(undefined);
-  const [sun_preference, setSun_preference] = useState<any>(undefined);
+  const [sun_regime, setSun_regime] = useState<any>(undefined);
 
   const [species, setSpecies] = useState<any>(undefined);
   const [genus, setGenus] = useState<any>(undefined);
@@ -69,7 +69,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
       return;
     }
 
-    if (!photoFile || !species || !soil || !sun_preference) return;
+    if (!photoFile || !species || !soil || !sun_regime) return;
 
     const data = new FormData();
     data.append("image", photoFile ? photoFile : "");
@@ -78,7 +78,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
     data.append("custom_name", custom_name ? photoFile : "");
     data.append("complementary_name", complementary_name ? complementary_name : "");
     data.append("soil", soil.key ? soil.key : "");
-    data.append("sun_preference", sun_preference.key ? sun_preference.key : "");
+    data.append("sun_regime", sun_regime.key ? sun_regime.key : "");
     data.append("species", species.key ? species.key : "");
 
     const response = await authFetch(
@@ -230,15 +230,15 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
             ></Select>
           </div>
           <div>
-            <label htmlFor="sun_preference">Sun preference</label>
+            <label htmlFor="sun_regime">Sun preference</label>
             <Select
-              name="sun_preference"
-              id="sun_preference"
-              data={sun_preferences}
-              value={sun_preference}
+              name="sun_regime"
+              id="sun_regime"
+              data={sun_regimes}
+              value={sun_regime}
               keyIndex="id"
               valueIndex="name"
-              handleChange={setSun_preference}
+              handleChange={setSun_regime}
               tabIndex={0}
             ></Select>
           </div>
@@ -297,7 +297,7 @@ const Add: NextPage = ({ groups, sun_preferences, soils }: any) => {
           />
         </div>
 
-        <button tabIndex={0}>ENVIAR</button>
+        <Filled_button_button tabIndex={0}>Confirm</Filled_button_button>
       </form>
 
       <Card>

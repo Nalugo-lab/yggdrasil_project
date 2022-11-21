@@ -148,12 +148,13 @@ class Soil_ViewSet(viewsets.ModelViewSet):
     serializer_class = SoilSerializer
 
 
-class Sun_preference_ViewSet(viewsets.ModelViewSet):
+class Sun_regime_ViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
-    queryset = Sun_preference.objects.all()
-    serializer_class = Sun_preferenceSerializer
+    queryset = Sun_regime.objects.all()
+    serializer_class = Sun_regimeSerializer
 
 
+# ALTERAR SÓ COM O USER CERTO
 class Plant_ViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     queryset = Plant.objects.all()
@@ -186,6 +187,7 @@ class Plant_ViewSet(viewsets.ModelViewSet):
     #     pass
 
     # def update(self, request, pk=None):
+    #     print(request)
     #     pass
 
     # def partial_update(self, request, pk=None):

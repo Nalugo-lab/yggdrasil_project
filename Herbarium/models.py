@@ -56,7 +56,7 @@ class Species(models.Model):
     name = models.CharField(max_length=100)
 
 
-class Sun_preference(models.Model):
+class Sun_regime(models.Model):
     class Meta:
         verbose_name_plural = "Sun preferences"
         verbose_name = "Sun preference"
@@ -94,10 +94,12 @@ class Plant(models.Model):
     species = models.ForeignKey(Species, on_delete=models.PROTECT)
     last_watered = models.DateTimeField(null=True)
     last_fertilized = models.DateTimeField(null=True)
-    sun_preference = models.ForeignKey(
-        Sun_preference, on_delete=models.PROTECT)
+    sun_regime = models.ForeignKey(
+        Sun_regime, on_delete=models.PROTECT)
     soil = models.ForeignKey(Soil, on_delete=models.PROTECT)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_dead = models.BooleanField(default=False)
+    is_archived = models.BooleanField(default=False)
 
 
 class Plant_image(models.Model):

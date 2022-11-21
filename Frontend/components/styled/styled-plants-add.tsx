@@ -7,7 +7,7 @@ export const Container = styled.main`
   & form {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: 1fr .1fr;
     grid-template-areas:
       none
       "group family genus species"
@@ -21,6 +21,8 @@ export const Container = styled.main`
 `;
 
 export const Card = styled.div`
+  max-width: 720px;
+  margin: 100px auto;
   border: 7px solid var(--primary);
 `;
 

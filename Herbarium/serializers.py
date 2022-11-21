@@ -42,24 +42,24 @@ class SoilSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description')
 
 
-class Sun_preferenceSerializer(serializers.ModelSerializer):
+class Sun_regimeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Sun_preference
+        model = Sun_regime
         fields = ('id', 'name', 'description')
 
 
 class PlantSerializer(serializers.ModelSerializer):
     species = SpeciesSerializer()
     soil = SoilSerializer()
-    sun_preference = Sun_preferenceSerializer()
+    sun_regime = Sun_regimeSerializer()
     banner = serializers.SerializerMethodField("get_banner_url")
     owner = UserSerializer()
 
     class Meta:
         model = Plant
-        fields = ('owner', 'soil', 'sun_preference', 'species', 'banner',
+        fields = ('owner', 'soil', 'sun_regime', 'species', 'banner',
                   'id', 'popular_name', 'custom_name', 'complementary_name',
-                  'last_watered', 'last_fertilized')
+                  'last_watered', 'last_fertilized', 'is_dead', 'is_archived')
 
     def get_banner_url(self, plant):
         banner = Plant_image.objects.get(plant=plant, is_banner=True)

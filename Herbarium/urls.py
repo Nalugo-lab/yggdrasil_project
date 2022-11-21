@@ -10,7 +10,7 @@ router.register('groups', views.Group_ViewSet)
 router.register('families', views.Family_ViewSet)
 router.register('genera', views.Genus_ViewSet)
 router.register('species', views.Species_ViewSet)
-router.register('sun_preferences', views.Sun_preference_ViewSet)
+router.register('sun_regimes', views.Sun_regime_ViewSet)
 router.register('soils', views.Soil_ViewSet)
 router.register('plants', views.Plant_ViewSet)
 

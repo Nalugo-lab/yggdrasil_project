@@ -65,7 +65,7 @@ a {
     /* color: inherit; */
     transition: 160ms ;
     &:hover{
-      color: var(--primary);
+      color: var(--secondary);
     }
 }
 

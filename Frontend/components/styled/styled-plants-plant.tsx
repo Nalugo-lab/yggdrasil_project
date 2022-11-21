@@ -7,7 +7,6 @@ export const Container = styled.main`
   padding: 16px;
   gap: 16px;
   background-color: var(--background-secondary);
-  /* grid-template-columns: repeat(2, 1fr); */
 `;
 
 export const ScientificName = styled.div`
