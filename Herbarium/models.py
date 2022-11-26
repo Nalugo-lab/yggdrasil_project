@@ -92,8 +92,8 @@ class Plant(models.Model):
     complementary_name = models.CharField(max_length=30, null=True, blank=True)
     custom_name = models.CharField(max_length=50, null=True, blank=True)
     species = models.ForeignKey(Species, on_delete=models.PROTECT)
-    last_watered = models.DateTimeField(null=True)
-    last_fertilized = models.DateTimeField(null=True)
+    last_watered = models.DateField(null=True)
+    last_fertilized = models.DateField(null=True)
     sun_regime = models.ForeignKey(
         Sun_regime, on_delete=models.PROTECT)
     soil = models.ForeignKey(Soil, on_delete=models.PROTECT)

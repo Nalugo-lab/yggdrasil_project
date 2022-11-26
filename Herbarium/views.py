@@ -1,12 +1,11 @@
-from socket import ALG_OP_DECRYPT
-from django.forms.models import model_to_dict
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from rest_framework.response import Response
 from rest_framework import viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.decorators import *
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 
 from Herbarium.serializers import *
 from Herbarium.forms import *
@@ -157,11 +156,12 @@ class Sun_regime_ViewSet(viewsets.ModelViewSet):
 # ALTERAR SÓ COM O USER CERTO
 class Plant_ViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
-    queryset = Plant.objects.all()
+    queryset = Plant.objects.filter(is_archived=False)
     serializer_class = PlantSerializer
+    parser_classes = (JSONParser, FormParser, MultiPartParser)
 
     def list(self, request):
-        return Response(PlantSerializer(Plant.objects.filter(owner=request.user), many=True).data)
+        return Response(PlantSerializer(Plant.objects.filter(owner=request.user, is_archived=False), many=True).data)
 
     def create(self, request):
 
@@ -186,9 +186,22 @@ class Plant_ViewSet(viewsets.ModelViewSet):
     # def retrieve(self, request, pk=None):
     #     pass
 
-    # def update(self, request, pk=None):
-    #     print(request)
-    #     pass
+    def update(self, request, partial, pk=None):
+        try:
+            owner = User.objects.get(username=request.user)
+            plant = Plant.objects.get(id=pk, owner=owner)
+        
+        except:
+            return JsonResponse(status=401)
+
+        print(request.data)
+        serializer = PlantSerializer(plant, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(status=200, data=serializer.data, safe=False)
+
+        print(serializer.errors)
+        return JsonResponse(status=401, data="You are not allowed here!", safe=False)
 
     # def partial_update(self, request, pk=None):
     #     pass

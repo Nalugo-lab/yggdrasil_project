@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
-import { useContext } from "react";
+import Router from "next/router";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../components/AuthContext";
 import { Filled_button_button } from "../../components/essential";
 import {
@@ -11,6 +12,7 @@ import {
   Name,
   Title,
   Complementary_name,
+  ImageCard,
 } from "../../components/styled/styled-plants-plant";
 
 interface Data {
@@ -64,24 +66,34 @@ export async function getServerSideProps({ req, params }: any) {
 
 const Home: NextPage = ({ plant }: any) => {
   const { isAuthenticated, AccessToken, authFetch } = useContext(AuthContext);
+  const [last_fertilized, set_last_fertilized] = useState("");
+  const [last_watered, set_last_watered] = useState("");
 
-  async function Charon() {
+  // provavelmente vou ter que criar uma rota própria para proteger a alteração dos dados
+  async function patch(data: any) {
+    console.log(data);
     const response = await fetch(`http://localhost:8000/plants/${plant.id}/`, {
       method: "PATCH",
       headers: {
+        "Content-Type": "application/json",
         Authorization: "Bearer " + String(AccessToken),
       },
-      body: JSON.stringify({
-        id_dead: true,
-      }),
+      body: JSON.stringify(data),
     });
 
-    console.log(response);
+    if (response.ok) {
+      alert("tudo certo!");
+      const data = await response.json();
+      Router.push("/");
+    } else {
+      console.log(response);
+    }
   }
 
   return (
     <Container>
       <Name>
+        {plant.is_dead && <b>TÁ MORTINHA</b>}
         <Title>
           <ScientificName>
             <Genus>{plant.species.genus.name}</Genus>
@@ -103,10 +115,46 @@ const Home: NextPage = ({ plant }: any) => {
       <p>{"last fertilized:" + plant.last_fertilized}</p>
 
       <p>{"owner username:" + plant.owner.username}</p> */}
-      <Filled_button_button onClick={Charon}>MORREU!</Filled_button_button>
-      <Filled_button_button>Arquivar</Filled_button_button>
 
-      <img src={"http://localhost:8000" + plant.banner}></img>
+      {!plant.is_dead && (
+        <Filled_button_button onClick={() => patch({ is_dead: true })}>
+          MORREU!
+        </Filled_button_button>
+      )}
+      <Filled_button_button onClick={() => patch({ is_archived: true })}>
+        Arquivar
+      </Filled_button_button>
+      <form>
+        <div>
+          <label htmlFor="last_watered">Last watered</label>
+          <input
+            type="date"
+            id="last_watered"
+            name="last_watered"
+            value={last_watered}
+            onChange={(e) => {
+              set_last_watered(e.target.value);
+              patch({ last_watered: e.target.value });
+            }}
+          />
+        </div>
+        <div>
+          <label htmlFor="last_fertilized">Last fertilized</label>
+          <input
+            type="date"
+            id="last_fertilized"
+            name="last_fertilized"
+            value={last_fertilized}
+            onChange={(e) => {
+              set_last_fertilized(e.target.value);
+              patch({ last_fertilized: e.target.value });
+            }}
+          />
+        </div>
+      </form>
+      <ImageCard>
+        <img src={"http://localhost:8000" + plant.banner} />
+      </ImageCard>
     </Container>
   );
 };
