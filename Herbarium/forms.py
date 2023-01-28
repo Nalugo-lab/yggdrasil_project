@@ -8,7 +8,6 @@ class Plant_Form(forms.ModelForm):
         queryset=Family.objects.all(),
         to_field_name='name',
         required=True,
-        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     class Meta:

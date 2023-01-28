@@ -49,3 +49,8 @@ export const ImageCard = styled.div`
   max-width: 520px;
   margin: auto;
 `
+
+export const Other_images_wrapper = styled.div`
+  display: flex;
+  overflow-x: scroll;
+`

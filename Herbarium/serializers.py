@@ -53,11 +53,12 @@ class PlantSerializer(serializers.ModelSerializer):
     soil = SoilSerializer()
     sun_regime = Sun_regimeSerializer()
     banner = serializers.SerializerMethodField("get_banner_url")
+    images = serializers.SerializerMethodField("get_images_urls")
     owner = UserSerializer()
 
     class Meta:
         model = Plant
-        fields = ('owner', 'soil', 'sun_regime', 'species', 'banner',
+        fields = ('owner', 'soil', 'sun_regime', 'species', 'banner', 'images',
                   'id', 'popular_name', 'custom_name', 'complementary_name',
                   'last_watered', 'last_fertilized', 'is_dead', 'is_archived')
 
@@ -65,3 +66,8 @@ class PlantSerializer(serializers.ModelSerializer):
         banner = Plant_image.objects.get(plant=plant, is_banner=True)
 
         return banner.image.url
+
+    def get_images_urls(self, plant):
+        images = Plant_image.objects.filter(plant=plant, is_banner=False).values('image')
+
+        return images

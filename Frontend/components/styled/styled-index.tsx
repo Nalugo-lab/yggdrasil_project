@@ -11,7 +11,6 @@ export const Container = styled.main`
 export const Features = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: 250px;
 `;
 
 export const Feature = styled.div`
@@ -25,6 +24,10 @@ export const Feature = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
+  img{
+    width: 120px;
+    height: 120px;
+  }
   & a {
     margin-top: auto;
   }
@@ -51,7 +54,7 @@ export const Hero_main = styled.div`
   gap: 32px;
 
   h1 {
-    font-size: var(--font-size-4xl);
+    font-size: 2rem;
   }
 `;
 

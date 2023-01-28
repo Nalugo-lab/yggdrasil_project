@@ -13,7 +13,6 @@ type AuthContextType = {
     body: string | FormData
   ) => Promise<any>;
   user: any;
-  CsrfToken: string | null;
   RefreshToken: string | null;
   AccessToken: string | null;
 };
@@ -43,7 +42,6 @@ export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: any) {
   const [user, setUser] = useState(null);
-  const [CsrfToken, setCsrfToken] = useState<string | null>(null);
   const [RefreshToken, setRefreshToken] = useState<string | null>(null);
   const [AccessToken, setAccessToken] = useState<string | null>(null);
   const isAuthenticated = !!user;
@@ -56,7 +54,6 @@ export function AuthProvider({ children }: any) {
 
     const headers = new Headers({
       "Content-Type": "application/json",
-      "X-CSRFToken": CsrfToken ? CsrfToken : "",
     });
 
     const response = await fetch("http://localhost:8000/auth/authenticate", {
@@ -69,9 +66,6 @@ export function AuthProvider({ children }: any) {
     else setUser(null);
   }
 
-  // useEffect(() => {
-  //   console.log(user);
-  // }, [user]);
 
   useEffect(() => {
     if (!RefreshToken) return;
@@ -87,7 +81,6 @@ export function AuthProvider({ children }: any) {
   }, [AccessToken]);
 
   useEffect(() => {
-    setCsrfToken(getCookie("csrftoken"));
     setAccessToken(localStorage.getItem("AccessToken"));
     setRefreshToken(localStorage.getItem("RefreshToken"));
   }, []);
@@ -120,7 +113,6 @@ export function AuthProvider({ children }: any) {
     // TEM QUE VER DE DAR CATCH AQUI
 
     setUser(null);
-    setCsrfToken(getCookie("csrftoken"));
     setRefreshToken(null);
     setAccessToken(null);
     deleteCookie("RefreshToken");
@@ -158,7 +150,6 @@ export function AuthProvider({ children }: any) {
         logout,
         authFetch,
         user,
-        CsrfToken,
         RefreshToken,
         AccessToken,
       }}

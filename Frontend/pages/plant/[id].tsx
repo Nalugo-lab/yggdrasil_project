@@ -13,6 +13,7 @@ import {
   Title,
   Complementary_name,
   ImageCard,
+  Other_images_wrapper
 } from "../../components/styled/styled-plants-plant";
 
 interface Data {
@@ -65,13 +66,14 @@ export async function getServerSideProps({ req, params }: any) {
 }
 
 const Home: NextPage = ({ plant }: any) => {
-  const { isAuthenticated, AccessToken, authFetch } = useContext(AuthContext);
+  const { isAuthenticated, AccessToken, authFetch } =
+    useContext(AuthContext);
   const [last_fertilized, set_last_fertilized] = useState("");
   const [last_watered, set_last_watered] = useState("");
+  const [photoFile, setPhotoFile] = useState<Blob>();
 
   // provavelmente vou ter que criar uma rota própria para proteger a alteração dos dados
   async function patch(data: any) {
-    console.log(data);
     const response = await fetch(`http://localhost:8000/plants/${plant.id}/`, {
       method: "PATCH",
       headers: {
@@ -84,7 +86,27 @@ const Home: NextPage = ({ plant }: any) => {
     if (response.ok) {
       alert("tudo certo!");
       const data = await response.json();
-      Router.push("/");
+      // Router.push("/");
+    } else {
+    }
+  }
+
+  async function add_image(event: any) {
+    event.preventDefault();
+    const data = new FormData();
+    data.append("image", photoFile ? photoFile : "");
+    data.append("pk", plant.id);
+
+    const response = await authFetch(
+      `http://localhost:8000/add_image`,
+      "POST",
+      data
+    );
+
+    if (response.ok) {
+      alert("tudo certo!");
+      const data = await response.json();
+      
     } else {
       console.log(response);
     }
@@ -115,7 +137,6 @@ const Home: NextPage = ({ plant }: any) => {
       <p>{"last fertilized:" + plant.last_fertilized}</p>
 
       <p>{"owner username:" + plant.owner.username}</p> */}
-
       {!plant.is_dead && (
         <Filled_button_button onClick={() => patch({ is_dead: true })}>
           MORREU!
@@ -126,12 +147,12 @@ const Home: NextPage = ({ plant }: any) => {
       </Filled_button_button>
       <form>
         <div>
+          <p>Last watered at: {plant.last_watered}</p>
           <label htmlFor="last_watered">Last watered</label>
           <input
             type="date"
             id="last_watered"
             name="last_watered"
-            value={last_watered}
             onChange={(e) => {
               set_last_watered(e.target.value);
               patch({ last_watered: e.target.value });
@@ -139,12 +160,12 @@ const Home: NextPage = ({ plant }: any) => {
           />
         </div>
         <div>
+          <p>Last fertilized at: {plant.last_fertilized}</p>
           <label htmlFor="last_fertilized">Last fertilized</label>
           <input
             type="date"
             id="last_fertilized"
             name="last_fertilized"
-            value={last_fertilized}
             onChange={(e) => {
               set_last_fertilized(e.target.value);
               patch({ last_fertilized: e.target.value });
@@ -155,6 +176,32 @@ const Home: NextPage = ({ plant }: any) => {
       <ImageCard>
         <img src={"http://localhost:8000" + plant.banner} />
       </ImageCard>
+      
+      <Other_images_wrapper>
+        {plant.images &&
+          plant.images.map((image: any) => {
+            return (
+              <ImageCard>
+                <img src={"http://localhost:8000/media/" + image.image} />{" "}
+              </ImageCard>
+            );
+          })}
+      </Other_images_wrapper>
+
+        <form onSubmit={add_image}>
+          <label htmlFor="new_image">Add image</label>
+          <input
+            type="file"
+            accept="image/*"
+            id="photo"
+            name="photo"
+            onChange={(e) => {
+              const [file]: any = e.target.files;
+              if (file) setPhotoFile(file);
+            }}
+          ></input>
+          <Filled_button_button>Add!</Filled_button_button>
+        </form>
     </Container>
   );
 };

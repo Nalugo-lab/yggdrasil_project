@@ -50,8 +50,8 @@ CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000']
 
 INSTALLED_APPS = [
     # APPS
-    'Herbarium.apps.HerbariumConfig',
-    'accounts.apps.AccountsConfig',
+    'Herbarium',
+    'accounts',
 
     # Third-party APPS
     'django_browser_reload',
@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
 
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

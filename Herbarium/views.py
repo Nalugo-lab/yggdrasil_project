@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.response import Response
 from rest_framework import viewsets, generics
@@ -17,13 +18,6 @@ class Group_ViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-
-    # def list(self, request):
-    #     pass
-
-    # def retrieve(self, request, pk=None):
-    #     pass
-
 
 @api_view(('GET',))
 def GetFamilies(request, group):
@@ -189,15 +183,14 @@ class Plant_ViewSet(viewsets.ModelViewSet):
     def update(self, request, partial, pk=None):
         try:
             owner = User.objects.get(username=request.user)
-            plant = Plant.objects.get(id=pk, owner=owner)
-        
+            plant = Plant.objects.get(pk=pk, owner=owner)
         except:
             return JsonResponse(status=401)
 
-        print(request.data)
         serializer = PlantSerializer(plant, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            updated_plant = serializer.save()
+
             return JsonResponse(status=200, data=serializer.data, safe=False)
 
         print(serializer.errors)
@@ -208,3 +201,26 @@ class Plant_ViewSet(viewsets.ModelViewSet):
 
     # def destroy(self, request, pk=None):
     #     pass
+
+
+class Image_view(APIView):
+
+    def post(self, request):
+        try:
+            owner = User.objects.get(username=request.user)
+            plant = Plant.objects.get(pk=request.data['pk'], owner=owner)
+            
+        except:
+            return JsonResponse(status=401)
+
+        form = Plant_image_Form({}, request.FILES)
+
+        if form.is_valid():
+            image = form.save()
+            image.plant = plant
+            image.is_banner = False
+            image.save()
+
+            return Response(PlantSerializer(plant).data)
+
+        return Response(form.errors.as_json())
