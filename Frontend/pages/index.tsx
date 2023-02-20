@@ -7,6 +7,10 @@ import {
   Hero,
   Hero_main,
   Hero_buttons,
+  Introduction,
+  Description,
+  Hero_images,
+  Hero_images_wrapper
 } from "../components/styled/styled-index";
 import {
   Filled_a_button,
@@ -19,11 +23,11 @@ const Home: NextPage = () => {
       <Hero>
         <Hero_wrapper>
           <Hero_main>
-            <h1>The all-in-one solution for your gardening needs</h1>
-            <h3>
+            <Introduction>The all-in-one solution for your gardening needs</Introduction>
+            <Description>
               Yggdrasil Project is a website aimed to help you catalog,
               register and keep track of your plants 
-            </h3>
+            </Description>
             <Hero_buttons>
               <Filled_a_button href="/register">Get Started!</Filled_a_button>
               <Outlined_a_button href="/login">
@@ -31,7 +35,13 @@ const Home: NextPage = () => {
               </Outlined_a_button>
             </Hero_buttons>
           </Hero_main>
-          <img src="suculentates.jpeg" alt="flower pot with a succulent on top" />
+          <Hero_images>
+            <Hero_images_wrapper>
+          <img src="20230219_114652.jpg" alt="flower pot with a succulent on top" />
+          <img src="20230219_114620.jpg" alt="flower pot with a succulent on top" />
+          <img src="20230219_120349.jpg" alt="flower pot with a succulent on top" />
+          </Hero_images_wrapper>
+          </Hero_images>
         </Hero_wrapper>
       </Hero>
 
@@ -40,7 +50,7 @@ const Home: NextPage = () => {
           <img src="/icons/alive_plant.png" alt="Type Safe Icon (helmet)" />
           <h3>Catalog your plants</h3>
           <p>
-            You can catalog your plants, upload images and keep track of its growth, register soil information, luminosity regime, last watering and fertilization dates, and much more! 
+            We can help you catalog your plants, upload images and keep track of its growth!
           </p>
 
         </Feature>
@@ -49,30 +59,20 @@ const Home: NextPage = () => {
           <img src="/icons/dead_plant.png" alt="Type Safe Icon (helmet)" />
           <h3>Rest in peace...</h3>
           <p>
-            If something bad happens to your plant (we hope this never happens) you can mark it as dead. We can provide some info to help you on your gardening journey 
-          </p>
+            Register everything that happens in your plant's life cycle
+            </p>
 
         </Feature>
 
         <Feature>
-          <img src="/v0.5-rc/images/helmet.svg" alt="Type Safe Icon (helmet)" />
-          <h3>Type Safe</h3>
+          <img src="/icons/meu_filho.png" alt="Type Safe Icon (helmet)" />
+          <h3>Make it your own</h3>
           <p>
-            From request to response Rocket ensures that your types mean
-            something.
+            Bring personality to your plants by adding custom names, titles and plaques
           </p>
 
         </Feature>
 
-        <Feature>
-          <img src="/v0.5-rc/images/helmet.svg" alt="Type Safe Icon (helmet)" />
-          <h3>Type Safe</h3>
-          <p>
-            From request to response Rocket ensures that your types mean
-            something.
-          </p>
-
-        </Feature>
       </Features>
 
     </Container>
