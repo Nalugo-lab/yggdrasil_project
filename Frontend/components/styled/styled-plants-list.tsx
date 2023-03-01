@@ -28,14 +28,8 @@ export const ImageCard = styled.div<ImageCardProps>`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  flex-basis: calc(100% * 0.35);
-
-  & img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+  flex: 1;
+  height: 100%;
 `;
 
 export const ScientificName = styled.p``;
@@ -63,17 +57,22 @@ export const Icons_wrapper = styled.div`
   grid-template-columns: repeat(2, 1fr);
   row-gap: 16px;
   grid-template-rows: repeat(2, 1fr);
+  text-align: center;
 `;
 
 export const PlantCard = styled.div`
-  & a {
-    border: 3px solid var(--primary);
+  a {
     display: flex;
-    font-size: 1rem;
-    border-radius: 5px;
-    min-width: 550px;
   }
+
+  border-radius: 5px;
+  font-size: 1rem;
+  border: 3px solid var(--primary);
+  flex: 1;
+  min-width: 550px;
+
   &:hover ${Title} p{
     color: var(--primary) !important;
   }
+
 `;
