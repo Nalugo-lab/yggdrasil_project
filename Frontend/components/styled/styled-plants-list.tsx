@@ -24,7 +24,7 @@ interface ImageCardProps {
 
 export const ImageCard = styled.div<ImageCardProps>`
   aspect-ratio: 1 / 1;
-  background-image: url(${(props: any) => props.src});
+  background-image: url(${({src}) => src});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

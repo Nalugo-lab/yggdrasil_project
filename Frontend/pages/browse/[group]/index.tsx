@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import { Container } from "../../../components/styled/styled-index";
+import { Family, Group } from "../../../components/types/classification";
 
 interface Data {
   name: string;
@@ -7,27 +8,31 @@ interface Data {
 }
 
 export async function getStaticPaths() {
-  const res = await fetch(
-    `http://localhost:8000/groups/`
-  );
-  const groups = (await res.json());
-  const paths = groups.map((group: any) => ({
+  const res = await fetch(`http://localhost:8000/groups/`);
+  const groups = await res.json();
+  const paths = groups.map((group: Group) => ({
     params: { group: group.name },
   }));
 
   return { paths, fallback: false };
 }
 
-export async function getStaticProps({ params }: any) {
-  const res = await fetch(
-    `http://localhost:8000/scientific/${params.group}`
-  );
-  const families = (await res.json());
+interface Params {
+  params: { group: string };
+}
+export async function getStaticProps({ params }: Params) {
+  const res = await fetch(`http://localhost:8000/scientific/${params.group}`);
+  const families = await res.json();
 
   return { props: { families, group: params.group } };
 }
 
-const Home: NextPage = ({ families, group }: any) => {
+interface Props {
+  families: Array<Family>
+  group: Group
+}
+
+const Home = ({ families, group }: Props) => {
   return (
     <Container>
       <h1>FAMILIES</h1>

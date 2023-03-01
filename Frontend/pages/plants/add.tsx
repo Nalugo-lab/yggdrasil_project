@@ -10,24 +10,33 @@ import {
   Card,
   Container,
   Complementary_name,
-  Genus,
+  Genus_display,
   Name,
   PopularName,
   ScientificName,
-  Species,
+  Species_display,
   Title,
   Errors,
 } from "../../components/styled/styled-plants-add";
 import { AuthContext } from "../../components/AuthContext";
 import Router from "next/router";
-import { Select, Basic_input, Filled_button_button } from "../../components/essential";
+import {
+  Select,
+  Basic_input,
+  Filled_button_button,
+} from "../../components/essential";
+import {
+  Family,
+  Genus,
+  Group,
+  Species,
+} from "../../components/types/classification";
+import { Soil, Sun_regime } from "../../components/types/plants";
 
 export async function getStaticProps() {
   const groupsRes = await fetch(`http://localhost:8000/groups/`);
 
-  const sun_regimesRes = await fetch(
-    `http://localhost:8000/sun_regimes/`
-  );
+  const sun_regimesRes = await fetch(`http://localhost:8000/sun_regimes/`);
 
   const soilsRes = await fetch(`http://localhost:8000/soils/`);
 
@@ -38,7 +47,13 @@ export async function getStaticProps() {
   return { props: { groups, sun_regimes, soils } };
 }
 
-const Add: NextPage = ({ groups, sun_regimes, soils }: any) => {
+interface Add_props {
+  groups: Array<Group>;
+  sun_regimes: Array<Sun_regime>;
+  soils: Array<Soil>;
+}
+
+const Add = ({ groups, sun_regimes, soils }: Add_props) => {
   const { isAuthenticated, AccessToken, authFetch } = useContext(AuthContext);
 
   const [errors, set_errors] = useState<any>(undefined);
@@ -47,17 +62,17 @@ const Add: NextPage = ({ groups, sun_regimes, soils }: any) => {
   const [custom_name, setCustom_name] = useState("");
   const [complementary_name, setComplementary_name] = useState("");
 
-  const [soil, setSoil] = useState<any>(undefined);
-  const [sun_regime, setSun_regime] = useState<any>(undefined);
+  const [soil, setSoil] = useState<any | undefined>(undefined);
+  const [sun_regime, setSun_regime] = useState<any | undefined>(undefined);
 
-  const [species, setSpecies] = useState<any>(undefined);
-  const [genus, setGenus] = useState<any>(undefined);
-  const [family, setFamily] = useState<any>(undefined);
-  const [group, setGroup] = useState<any>(undefined);
+  const [species, setSpecies] = useState<any | undefined>(undefined);
+  const [genus, setGenus] = useState<any | undefined>(undefined);
+  const [family, setFamily] = useState<any | undefined>(undefined);
+  const [group, setGroup] = useState<any | undefined>(undefined);
 
-  const [speciesData, setSpeciesData] = useState();
-  const [genusData, setGenusData] = useState();
-  const [familyData, setFamilyData] = useState();
+  const [speciesData, setSpeciesData] = useState<Array<Species>>();
+  const [genusData, setGenusData] = useState<Array<Genus>>();
+  const [familyData, setFamilyData] = useState<Array<Family>>();
 
   const [photoFile, setPhotoFile] = useState<Blob>();
 
@@ -65,7 +80,6 @@ const Add: NextPage = ({ groups, sun_regimes, soils }: any) => {
     e.preventDefault();
 
     if (!isAuthenticated) {
-      console.log("tá querendo me enganar fdp?");
       return;
     }
 
@@ -76,7 +90,10 @@ const Add: NextPage = ({ groups, sun_regimes, soils }: any) => {
 
     data.append("popular_name", popular_name ? popular_name : "");
     data.append("custom_name", custom_name ? photoFile : "");
-    data.append("complementary_name", complementary_name ? complementary_name : "");
+    data.append(
+      "complementary_name",
+      complementary_name ? complementary_name : ""
+    );
     data.append("soil", soil.key ? soil.key : "");
     data.append("sun_regime", sun_regime.key ? sun_regime.key : "");
     data.append("species", species.key ? species.key : "");
@@ -304,8 +321,8 @@ const Add: NextPage = ({ groups, sun_regimes, soils }: any) => {
         <Name>
           <Title>
             <ScientificName>
-              <Genus>{genus && genus.value}</Genus>
-              <Species>{species && species.value}</Species>
+              <Genus_display>{genus && genus.value}</Genus_display>
+              <Species_display>{species && species.value}</Species_display>
             </ScientificName>
             <Complementary_name>{complementary_name}</Complementary_name>
           </Title>

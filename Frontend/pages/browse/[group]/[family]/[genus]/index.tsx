@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import { Container } from "../../../../../components/styled/styled-index";
+import { Genus, Species } from "../../../../../components/types/classification";
 
 interface Data {
   name: string;
@@ -12,10 +13,10 @@ export async function getStaticPaths() {
   );
   const species = (await res.json());
 
-  const paths = species.map((species: any) => ({
+  const paths = species.map((species: Species) => ({
     params: {
-      group: species.family.group.name,
-      family: species.family.name,
+      group: species.genus.family.group.name,
+      family: species.genus.family.name,
       genus: species.name,
     },
   }));
@@ -23,7 +24,15 @@ export async function getStaticPaths() {
   return { paths, fallback: false };
 }
 
-export async function getStaticProps({ params }: any) {
+interface Params {
+  params: {
+    group: string;
+    family: string;
+    genus: string;
+
+  }
+}
+export async function getStaticProps({ params }: Params) {
   const res = await fetch(
     `http://localhost:8000/scientific/${params.group}/${params.family}/${params.genus}`
   );
@@ -38,7 +47,12 @@ export async function getStaticProps({ params }: any) {
   };
 }
 
-const Home: NextPage = ({ species, genus }: any) => {
+interface Props {
+  species: Array<Species>;
+  genus: Genus;
+}
+
+const Home = ({ species, genus }: Props) => {
   return (
     <Container>
       <h1>SPECIES</h1>

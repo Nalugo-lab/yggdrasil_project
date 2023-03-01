@@ -1,6 +1,6 @@
-import type { NextPage } from "next";
+import type { NextApiRequest, NextPage } from "next";
 import Router from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../components/AuthContext";
 import { Filled_button_button } from "../../components/essential";
 import {
@@ -15,46 +15,9 @@ import {
   ImageCard,
   Other_images_wrapper
 } from "../../components/styled/styled-plants-plant";
+import { Plant } from "../../components/types/plants";
 
-interface Data {
-  owner: {
-    name: string;
-    username: string;
-    email: string;
-  };
-  soil: {
-    name: string;
-    description: string;
-  };
-  sun_regime: {
-    name: string;
-    description: string;
-  };
-  species: {
-    id: number;
-    name: string;
-    genus: {
-      id: number;
-      name: string;
-      family: {
-        id: number;
-        name: string;
-        group: {
-          id: number;
-          name: string;
-        };
-      };
-    };
-  };
-
-  banner: string;
-  popular_name: string | null;
-  custom_name: string | null;
-  complementary_name: string | null;
-  last_watered: string | null;
-}
-
-export async function getServerSideProps({ req, params }: any) {
+export async function getServerSideProps({ req, params }: {req: NextApiRequest, params:{id: number}}) {
   const res = await fetch(`http://localhost:8000/plants/${params.id}`, {
     headers: {
       Authorization: "Bearer " + String(req.cookies.AccessToken),
@@ -65,7 +28,7 @@ export async function getServerSideProps({ req, params }: any) {
   return { props: { plant: plant } };
 }
 
-const Home: NextPage = ({ plant }: any) => {
+const Home = ({ plant }: {plant: Plant}) => {
   const { isAuthenticated, AccessToken, authFetch } =
     useContext(AuthContext);
   const [last_fertilized, set_last_fertilized] = useState("");
@@ -73,7 +36,7 @@ const Home: NextPage = ({ plant }: any) => {
   const [photoFile, setPhotoFile] = useState<Blob>();
 
   // provavelmente vou ter que criar uma rota própria para proteger a alteração dos dados
-  async function patch(data: any) {
+  async function patch(data: unknown) {
     const response = await fetch(`http://localhost:8000/plants/${plant.id}/`, {
       method: "PATCH",
       headers: {
@@ -91,11 +54,11 @@ const Home: NextPage = ({ plant }: any) => {
     }
   }
 
-  async function add_image(event: any) {
+  async function add_image(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData();
     data.append("image", photoFile ? photoFile : "");
-    data.append("pk", plant.id);
+    data.append("pk", plant.id.toString());
 
     const response = await authFetch(
       `http://localhost:8000/add_image`,
@@ -108,7 +71,6 @@ const Home: NextPage = ({ plant }: any) => {
       const data = await response.json();
       
     } else {
-      console.log(response);
     }
   }
 
@@ -179,7 +141,7 @@ const Home: NextPage = ({ plant }: any) => {
       
       <Other_images_wrapper>
         {plant.images &&
-          plant.images.map((image: any) => {
+          plant.images.map((image) => {
             return (
               <ImageCard>
                 <img src={"http://localhost:8000/media/" + image.image} />{" "}

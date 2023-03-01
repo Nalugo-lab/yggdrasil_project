@@ -20,23 +20,29 @@ const Home: NextPage = () => {
   return (
     <Container>
       <form method="POST" onSubmit={submitForm}>
-        <Basic_input           
+        <Basic_input
           type="text"
           id="id"
           label="username"
           name="username"
           value={username}
-          handleChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-          />
-        
-        <Basic_input           
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setUsername(e.target.value)
+          }
+          tabIndex={0}
+        />
+
+        <Basic_input
           type="password"
           id="id"
           label="password"
           name="password"
           value={password}
-          handleChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          />
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
+          tabIndex={0}
+        />
 
         <Filled_button_button>Log in</Filled_button_button>
       </form>

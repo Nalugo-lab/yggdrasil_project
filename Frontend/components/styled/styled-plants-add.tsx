@@ -33,10 +33,10 @@ export const ScientificName = styled.div`
   gap: 6px;
 `;
 
-export const Genus = styled.b`
+export const Genus_display = styled.b`
   font-style: italic;
 `;
-export const Species = styled.span`
+export const Species_display = styled.span`
   font-style: italic;
 `;
 

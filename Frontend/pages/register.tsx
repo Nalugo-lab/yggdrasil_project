@@ -1,7 +1,11 @@
 import type { NextPage } from "next";
 import Router from "next/router";
 import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
-import { Basic_input, Filled_button_button, Input_wrapper } from "../components/essential";
+import {
+  Basic_input,
+  Filled_button_button,
+  Input_wrapper,
+} from "../components/essential";
 import { Container } from "../components/styled/styled-register";
 
 // export async function getStaticProps() {
@@ -34,7 +38,6 @@ const Home: NextPage = () => {
     if (response.ok) {
       Router.push("/login");
     } else {
-      console.log(response);
     }
   }
   return (
@@ -46,7 +49,10 @@ const Home: NextPage = () => {
           value={name}
           type="text"
           name="name"
-          handleChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setName(e.target.value)
+          }
+          tabIndex={0}
         />
 
         <Basic_input
@@ -55,7 +61,10 @@ const Home: NextPage = () => {
           value={email}
           type="text"
           name="email"
-          handleChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
+          tabIndex={0}
         />
 
         <Basic_input
@@ -64,7 +73,10 @@ const Home: NextPage = () => {
           value={username}
           type="text"
           name="username"
-          handleChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setUsername(e.target.value)
+          }
+          tabIndex={0}
         />
 
         <Basic_input
@@ -73,7 +85,10 @@ const Home: NextPage = () => {
           value={password}
           type="password"
           name="password"
-          handleChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
+          tabIndex={0}
         />
 
         <Basic_input
@@ -82,7 +97,10 @@ const Home: NextPage = () => {
           value={confirm_password}
           type="password"
           name="confirm_password"
-          handleChange={(e: ChangeEvent<HTMLInputElement>) => set_confirm_password(e.target.value)}
+          handleChange={(e: ChangeEvent<HTMLInputElement>) =>
+            set_confirm_password(e.target.value)
+          }
+          tabIndex={0}
         />
 
         <Filled_button_button>ENVIAR</Filled_button_button>

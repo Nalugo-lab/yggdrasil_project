@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
   Select_wrapper,
@@ -102,11 +102,11 @@ export const Label = styled.label<Label_interface>`
   font-size: 16px;
   line-height: 1;
   left: 16px;
-  transform: ${(props: any) =>
-    props.isEmpty
+  transform: ${({isEmpty}) =>
+    isEmpty
       ? "translate(0, 23px) scale(1)"
       : "translate(0, 12px) scale(0.8)"};
-  color: ${(props: any) => (props.isEmpty ? "var(--info)" : "var(--primary)")};
+  color: ${({isEmpty}) => (isEmpty ? "var(--info)" : "var(--primary)")};
 
   ${Basic_input_input}:focus ~ & {
     transform: translate(0, 12px) scale(0.8);
@@ -120,7 +120,7 @@ interface Basic_input_interface {
   type: string;
   label: string;
   value: string;
-  handleChange: any;
+  handleChange(e: ChangeEvent<HTMLInputElement>): void;
   tabIndex: number;
 }
 
@@ -158,7 +158,7 @@ type SelectType = {
   keyIndex: string | number;
   valueIndex: string | number;
   handleChange: any;
-  tabIndex: number | string;
+  tabIndex: number;
 };
 
 export function Select({

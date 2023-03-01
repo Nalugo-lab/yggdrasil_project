@@ -22,22 +22,6 @@ type LoginDataType = {
   password: string;
 };
 
-function getCookie(name: any): string | null {
-  if (!document.cookie) {
-    return null;
-  }
-
-  const xsrfCookies = document.cookie
-    .split(";")
-    .map((c) => c.trim())
-    .filter((c) => c.startsWith(name + "="));
-
-  if (xsrfCookies.length === 0) {
-    return null;
-  }
-  return decodeURIComponent(xsrfCookies[0].split("=")[1]);
-}
-
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: any) {
@@ -65,7 +49,6 @@ export function AuthProvider({ children }: any) {
     if (response.ok) setUser(jwt_decode<any>(AccessToken).user_id);
     else setUser(null);
   }
-
 
   useEffect(() => {
     if (!RefreshToken) return;

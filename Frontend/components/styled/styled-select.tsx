@@ -15,7 +15,7 @@ interface Option_interface {
 }
 
 export const Option = styled.div<Option_interface>`
-  color: ${(props: any) => (props.selected ? "var(--primary)" : "inherit")};
+  color: ${({selected}) => (selected ? "var(--primary)" : "inherit")};
 
   & label {
     display: block;
@@ -30,7 +30,7 @@ export const Option = styled.div<Option_interface>`
 export const Search_wrapper = styled.div<Options_wrapper_interface>`
   padding: 12px;
   & input {
-    opacity: ${(props: any) => (props.is_active ? "1" : "0")};
+    opacity: ${({is_active}) => (is_active ? "1" : "0")};
   }
 `;
 
@@ -63,16 +63,16 @@ export const Select_window = styled.div<Options_wrapper_interface>`
   overflow: hidden;
   order: 1;
   position: absolute;
-  top: ${(props: any) => (props.is_active ? "50px" : "-9999px")};
+  top: ${({is_active}) => (is_active ? "50px" : "-9999px")};
   z-index: 1;
-  opacity: ${(props: any) => (props.is_active ? "1" : "0")};
-  display: ${(props: any) => (props.is_active ? "block" : "none")};
-  margin-top: ${(props: any) => (props.is_active ? "8px" : "0px")};
+  opacity: ${({is_active}) => (is_active ? "1" : "0")};
+  display: ${({is_active}) => (is_active ? "block" : "none")};
+  margin-top: ${({is_active}) => (is_active ? "8px" : "0px")};
 `;
 
 export const Options_wrapper = styled.div<Options_wrapper_interface>`
-  max-height: ${(props: any) => (props.is_active ? "240px" : "auto")};
-  overflow-y: ${(props: any) => (props.is_active ? "scroll" : "auto")};
+  max-height: ${({is_active}) => (is_active ? "240px" : "auto")};
+  overflow-y: ${({is_active}) => (is_active ? "scroll" : "auto")};
 
   display: flex;
   flex-direction: column;
@@ -81,7 +81,7 @@ export const Options_wrapper = styled.div<Options_wrapper_interface>`
 `;
 
 interface Selected_interface {
-  tabIndex: any;
+  tabIndex: number;
 }
 
 export const Selected = styled.div<Selected_interface>`

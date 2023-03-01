@@ -16,11 +16,11 @@ import {
   Header_wrapper
 } from "../styled/styled-template";
 
-import { useContext, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext";
 
-interface TemplateProps<P = any> {
-  children: P;
+interface TemplateProps {
+  children: ReactElement;
   toggleDarkMode(): boolean;
   currentTheme: string;
 }

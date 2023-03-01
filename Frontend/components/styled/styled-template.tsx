@@ -18,7 +18,7 @@ interface AccountManagerOptionsProps {
 }
 
 export const AccountManagerOptions = styled.ul<AccountManagerOptionsProps>`
-  display: ${(props: any) => (props.isOpen ? "flex" : "none")};
+  display: ${({isOpen}) => (isOpen ? "flex" : "none")};
   position: absolute;
   padding: 8px;
   margin-top: 32px;
@@ -26,8 +26,8 @@ export const AccountManagerOptions = styled.ul<AccountManagerOptionsProps>`
   width: 256px;
   flex-direction: column;
   gap: 8px;
-  background-color: var(--background-primary);
-  border: 6px solid (--text-secondary);
+  background-color: var(--primary);
+  border: 6px solid (--text-primary);
   transform: translateX(50%);
 
   & li a{

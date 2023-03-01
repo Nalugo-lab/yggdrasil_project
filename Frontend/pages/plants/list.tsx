@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { NextApiRequest, NextPage } from "next";
 import Link from "next/link";
 import { NextRequest } from "next/server";
 import {
@@ -12,69 +12,24 @@ import {
   Title,
   Icons_wrapper,
 } from "../../components/styled/styled-plants-list";
+import { Plant } from "../../components/types/plants";
 
-interface Data {
-  id: number;
-  owner: {
-    name: string;
-    username: string;
-    email: string;
-  };
-  soil: {
-    name: string;
-    description: string;
-  };
-  sun_regime: {
-    name: string;
-    description: string;
-  };
-  species: {
-    id: number;
-    name: string;
-    genus: {
-      id: number;
-      name: string;
-      family: {
-        id: number;
-        name: string;
-        group: {
-          id: number;
-          name: string;
-        };
-      };
-    };
-  };
-
-  banner: string;
-  popular_name: string | null;
-  custom_name: string | null;
-  complementary_name: string | null;
-  last_watered: string | null;
-  last_fertilized: string | null;
-}
-
-export async function getServerSideProps({ req }: any) {
+export async function getServerSideProps({ req }: {req: NextApiRequest}) {
   const res = await fetch(`http://localhost:8000/plants`, {
     headers: {
       Authorization: "Bearer " + String(req.cookies.AccessToken),
     },
   });
 
-  // if (res.redirected) {
-  //   console.log("url: " + res.url);
-
-  //   return { props: { plants: [] } };
-  // }
-
   const plants = await res.json();
 
   return { props: { plants } };
 }
 
-const Home: NextPage = ({ plants }: any) => {
+const Home = ({ plants }: {plants: Array<Plant>}) => {
   return (
     <Container>
-      {plants.map((e: Data, index: number) => (
+      {plants.map((e, index: number) => (
         <PlantCard key={index}>
           <Link href={`/plant/${e.id}`}>
             <a>

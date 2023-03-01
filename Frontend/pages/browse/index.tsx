@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import { Container } from "../../components/styled/styled-index";
+import { Group } from "../../components/types/classification";
 
 interface Data {
   name: string;
@@ -11,11 +12,10 @@ export async function getStaticProps() {
     `http://localhost:8000/groups/`
   );
   const groups = (await res.json());
-    console.log(groups)
   return { props: { groups } };
 }
 
-const Home: NextPage = ({ groups }: any) => {
+const Home = ({ groups }: {groups: Array<Group>}) => {
   return (
     <Container>
       <h1>GRUPOS</h1>

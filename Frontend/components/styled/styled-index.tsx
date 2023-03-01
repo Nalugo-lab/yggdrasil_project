@@ -49,6 +49,7 @@ export const Hero_wrapper = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 96px;
   align-items: center;
+  min-height: 500px;
 `;
 
 export const Hero = styled.section`
@@ -78,7 +79,7 @@ overflow: hidden;
 
 img:nth-child(1){
   top: 0%;
-  left: 0%;
+  left: 10%;
 }
 
 img:nth-child(2){
@@ -87,8 +88,8 @@ img:nth-child(2){
 }
 
 img:nth-child(3){
-  top: 70%;
-  left: 0%;
+  top: 60%;
+  left: 5%;
 }
 
 img {
