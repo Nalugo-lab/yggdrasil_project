@@ -2,22 +2,18 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.response import Response
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.views import APIView
 from rest_framework.decorators import *
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.exceptions import NotFound
 
 from Herbarium.serializers import *
 from Herbarium.forms import *
 
 # Create your views here.
 
-
-class Group_ViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
 
 @api_view(('GET',))
 def GetFamilies(request, group):
@@ -92,12 +88,6 @@ class Genus_List(generics.ListAPIView):
         return Genus.objects.filter(family=family, family__group=group)
 
 
-class Genus_ViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
-    queryset = Genus.objects.all()
-    serializer_class = GenusSerializer
-
-
 class Species_List(generics.ListAPIView):
     serializer_class = SpeciesSerializer
     permission_classes = [AllowAny]
@@ -129,6 +119,26 @@ class Species_List(generics.ListAPIView):
         return Species.objects.filter(genus=genus, genus__family=family, genus__family__group=group)
 
 
+
+
+class Group_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
+
+class Family_ViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    queryset = Family.objects.all()
+    serializer_class = FamilySerializer
+
+
+class Genus_ViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = GenusSerializer
+    queryset = Genus.objects.all()
+
+
 class Species_ViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     queryset = Species.objects.all()
@@ -147,71 +157,59 @@ class Sun_regime_ViewSet(viewsets.ModelViewSet):
     serializer_class = Sun_regimeSerializer
 
 
-# ALTERAR SÓ COM O USER CERTO
 class Plant_ViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = Plant.objects.filter(is_archived=False)
     serializer_class = PlantSerializer
     parser_classes = (JSONParser, FormParser, MultiPartParser)
 
     def list(self, request):
-        return Response(PlantSerializer(Plant.objects.filter(owner=request.user, is_archived=False), many=True).data)
+        queryset = self.queryset.filter(owner=request.user)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
+        new_data = request.data
+        new_data['owner'] = self.request.user
+        print(new_data)
+        serializer = self.get_serializer(data=new_data)
+        serializer.is_valid(raise_exception=True)
+        plant = serializer.save()
+        form_image = Plant_image_Form({}, self.request.FILES)
+        if form_image.is_valid():
+            image = form_image.save(commit=False)
+            image.plant = plant
+            image.is_banner = True
+            image.save()
 
-        data = request.POST.copy()
-        data['owner'] = request.user
-        form = Plant_Form(data)
+    def update(self, serializer):
+        serializer.save()
 
-        if form.is_valid():
-            formImage = Plant_image_Form({}, request.FILES)
-
-            if formImage.is_valid():
-                plant = form.save()
-                image = formImage.save()
-                image.plant = plant
-                image.is_banner = True
-                image.save()
-
-                return Response(status=200)
-
-        return Response(form.errors.as_json())
-
-    # def retrieve(self, request, pk=None):
-    #     pass
-
-    def update(self, request, partial, pk=None):
+    def destroy(self, request, *args, **kwargs):
         try:
-            owner = User.objects.get(username=request.user)
-            plant = Plant.objects.get(pk=pk, owner=owner)
-        except:
-            return JsonResponse(status=401)
+            plant = self.get_object()
+            if plant.owner == request.user:
+                self.perform_destroy(plant)
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+        except NotFound:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = PlantSerializer(plant, data=request.data, partial=True)
-        if serializer.is_valid():
-            updated_plant = serializer.save()
-
-            return JsonResponse(status=200, data=serializer.data, safe=False)
-
-        print(serializer.errors)
-        return JsonResponse(status=401, data="You are not allowed here!", safe=False)
-
-    # def partial_update(self, request, pk=None):
-    #     pass
-
-    # def destroy(self, request, pk=None):
-    #     pass
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 
-class Image_view(APIView):
-
-    def post(self, request):
+class Image_ViewSet(viewsets.ViewSet):
+    @action(detail=False, methods=['post'])
+    def create(self, request):
         try:
             owner = User.objects.get(username=request.user)
             plant = Plant.objects.get(pk=request.data['pk'], owner=owner)
-            
         except:
-            return JsonResponse(status=401)
+            return Response(status=401)
 
         form = Plant_image_Form({}, request.FILES)
 

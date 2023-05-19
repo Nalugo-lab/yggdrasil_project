@@ -8,7 +8,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
 }
 * {
-    /* transition: background 350ms ease 0s; */
+    transition: background 350ms ease 0s;
     margin: 0;
     padding: 0;
     line-height: calc(1em + 0.725rem);

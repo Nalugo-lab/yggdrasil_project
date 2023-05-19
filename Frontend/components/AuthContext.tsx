@@ -17,7 +17,7 @@ type AuthContextType = {
   AccessToken: string | null;
 };
 
-type LoginDataType = {
+type Login_Datatype = {
   username: string;
   password: string;
 };
@@ -68,7 +68,7 @@ export function AuthProvider({ children }: any) {
     setRefreshToken(localStorage.getItem("RefreshToken"));
   }, []);
 
-  async function login({ username, password }: LoginDataType) {
+  async function login({ username, password }: Login_Datatype) {
     // TEM QUE VER DE DAR CATCH AQUI
 
     const response = await fetch("http://localhost:8000/auth/login", {

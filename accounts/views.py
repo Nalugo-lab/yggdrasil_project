@@ -14,18 +14,3 @@ class Register(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-
-# class Login(APIView):
-#     def post(self, request):
-#         email = request.data['email']
-#         password = request.data['password']
-
-#         user = User.objects.get(email=email)
-
-#         if user is None:
-#             raise AuthenticationFailed('User and/or password are incorrect')
-
-#         if not user.check_password(password):
-#             raise AuthenticationFailed('User and/or password are incorrect')
-
-#         return Response({"detail": "success"})
