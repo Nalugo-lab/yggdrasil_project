@@ -1,13 +1,10 @@
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
 from rest_framework.response import Response
 from rest_framework import viewsets, generics, status
-from rest_framework.views import APIView
 from rest_framework.decorators import *
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.exceptions import NotFound
+from django.views.decorators.csrf import csrf_exempt
 
 from Herbarium.serializers import *
 from Herbarium.forms import *
@@ -119,8 +116,6 @@ class Species_List(generics.ListAPIView):
         return Species.objects.filter(genus=genus, genus__family=family, genus__family__group=group)
 
 
-
-
 class Group_ViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     queryset = Group.objects.all()
@@ -169,18 +164,23 @@ class Plant_ViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        new_data = request.data
-        new_data['owner'] = self.request.user
-        print(new_data)
-        serializer = self.get_serializer(data=new_data)
-        serializer.is_valid(raise_exception=True)
-        plant = serializer.save()
-        form_image = Plant_image_Form({}, self.request.FILES)
-        if form_image.is_valid():
-            image = form_image.save(commit=False)
-            image.plant = plant
-            image.is_banner = True
-            image.save()
+        data = request.POST.copy()
+        data['owner'] = request.user
+        form = Plant_Form(data)
+
+        if form.is_valid():
+            formImage = Plant_image_Form({}, request.FILES)
+
+            if formImage.is_valid():
+                plant = form.save()
+                image = formImage.save()
+                image.plant = plant
+                image.is_banner = True
+                image.save()
+
+                return Response(status=200)
+
+        return Response(form.errors.as_json())
 
     def update(self, serializer):
         serializer.save()
@@ -202,23 +202,25 @@ class Plant_ViewSet(viewsets.ModelViewSet):
         return context
 
 
-class Image_ViewSet(viewsets.ViewSet):
-    @action(detail=False, methods=['post'])
-    def create(self, request):
-        try:
-            owner = User.objects.get(username=request.user)
-            plant = Plant.objects.get(pk=request.data['pk'], owner=owner)
-        except:
-            return Response(status=401)
 
-        form = Plant_image_Form({}, request.FILES)
+@api_view(('POST',))
+@csrf_exempt
+def Image_ViewSet(request):
 
-        if form.is_valid():
-            image = form.save()
-            image.plant = plant
-            image.is_banner = False
-            image.save()
+    try:
+        owner = User.objects.get(username=request.user)
+        plant = Plant.objects.get(pk=request.data['pk'], owner=owner)
+    except:
+        return Response(status=401)
 
-            return Response(PlantSerializer(plant).data)
+    form = Plant_image_Form({}, request.FILES)
 
-        return Response(form.errors.as_json())
+    if form.is_valid():
+        image = form.save()
+        image.plant = plant
+        image.is_banner = False
+        image.save()
+
+        return Response(PlantSerializer(plant).data)
+
+    return Response(form.errors.as_json())

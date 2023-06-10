@@ -17,7 +17,7 @@ router.register('plants', views.Plant_ViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('add_image', views.Image_ViewSet.as_view({'post': ''}), name='add_image'),
+    path('add_image', views.Image_ViewSet, name='add_image'),
 
 
     path('scientific/<group>', views.Family_List.as_view(), name='get_families'),
